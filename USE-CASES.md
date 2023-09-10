@@ -30,6 +30,7 @@ Alcremie style app.
 
 ## RNFs (Requisitos não-funcionais)
 
+- [ ] Cada requisição deve ser salva no banco de dados;
 - [ ] Os dados da aplicação precisam estar persistidos em um banco MongoDB;
 - [ ] Todas listas de dados precisam estar paginadas com no mínimo 1 item e no máximo 25 itens por página;
 - [ ] O usuário deve ser identificado por um JWT (JSON Web Token);
