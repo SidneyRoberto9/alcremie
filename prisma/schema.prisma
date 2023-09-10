@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  DEFAULT
+  ADMIN
+}
+
+enum RequestType {
+  GET
+  POST
+  PUT
+  DELETE
+}
+
+model User {
+  id        String   @id @default(uuid()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  avatarUrl String?  @map("avatar_url")
+  role      UserRole @default(ADMIN)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Request {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  requestType RequestType
+  route       String
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  @@map("requests")
+}
+
+model Image {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  isNsfw    Boolean   @default(false) @map("is_nsfw")
+  assetId   String    @unique @map("asset_id")
+  url       String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  tagsIDs String[] @map("tags_ids") @db.ObjectId
+  tags    Tag[]    @relation(fields: [tagsIDs], references: [id])
+
+  @@map("images")
+}
+
+model Tag {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  slug String @unique
+
+  imageIDs String[] @map("image_ids") @db.ObjectId
+  images   Image[]  @relation(fields: [imageIDs], references: [id])
+
+  @@map("tags")
+}
