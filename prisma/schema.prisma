@@ -23,11 +23,11 @@ enum RequestType {
 }
 
 model User {
-  id        String   @id @default(uuid()) @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   email     String   @unique
   avatarUrl String?  @map("avatar_url")
-  role      UserRole @default(ADMIN)
+  role      UserRole @default(DEFAULT)
   createdAt DateTime @default(now()) @map("created_at")
 
   favoriteImagesIDs String[] @map("favorite_images_ids") @db.ObjectId
