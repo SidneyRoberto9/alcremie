@@ -7,7 +7,7 @@ import { CreateTagUseCase } from '@/domain/alcremie/application/use-cases/cases/
 let inMemoryTagRepository: InMemoryTagRepository;
 let sut: CreateTagUseCase;
 
-describe('Create Image', () => {
+describe('Create Tag', () => {
   beforeEach(() => {
     inMemoryTagRepository = new InMemoryTagRepository();
     sut = new CreateTagUseCase(inMemoryTagRepository);
