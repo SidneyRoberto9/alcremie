@@ -11,10 +11,10 @@ Alcremie style app.
 - [x] Deve ser possível o usuário deletar uma tag;
 - [x] Deve ser possível buscar as imagens por uma tag;
 - [x] Deve ser possível enviar uma imagem;
-- [ ] Deve ser possível buscar as imagens;
-- [ ] Deve ser possível obter uma imagem aleatória;
+- [x] Deve ser possível buscar as imagens;
+- [x] Deve ser possível obter uma imagem aleatória;
 - [x] Deve ser possível o usuário pode favoritar uma imagem;
-- [ ] Deve ser possível o usuário deletar uma imagem;
+- [x] Deve ser possível o usuário deletar uma imagem;
 - [x] Deve ser possível obter a estatística de quantidade de imagens;
 - [x] Deve ser possível obter a estatística de quantidade de tags;
 - [x] Deve ser possível obter a estatística de quantidade de requests;
