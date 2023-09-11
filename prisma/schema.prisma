@@ -30,6 +30,9 @@ model User {
   role      UserRole @default(ADMIN)
   createdAt DateTime @default(now()) @map("created_at")
 
+  favoriteImagesIDs String[] @map("favorite_images_ids") @db.ObjectId
+  favoriteImages    Image[]  @relation(fields: [favoriteImagesIDs], references: [id])
+
   @@map("users")
 }
 
@@ -52,6 +55,9 @@ model Image {
 
   tagsIDs String[] @map("tags_ids") @db.ObjectId
   tags    Tag[]    @relation(fields: [tagsIDs], references: [id])
+
+  usersIDs String[] @map("users_ids") @db.ObjectId
+  users    User[]   @relation(fields: [usersIDs], references: [id])
 
   @@map("images")
 }
