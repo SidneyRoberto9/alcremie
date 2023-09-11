@@ -8,6 +8,7 @@ export function makeImage(override: Partial<ImageProps> = {}, id?: UniqueEntityI
       assetId: faker.string.nanoid(),
       url: faker.image.url(),
       isNsfw: faker.datatype.boolean(),
+      size: faker.number.int(),
       ...override,
     },
     id,

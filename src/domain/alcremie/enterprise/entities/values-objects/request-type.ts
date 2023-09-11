@@ -1,11 +1,13 @@
-export class RequestType {
-  public value: 'POST' | 'GET' | 'PUT' | 'DELETE';
+export type RequestTypeValue = 'POST' | 'GET' | 'PUT' | 'DELETE';
 
-  private constructor(value: 'POST' | 'GET' | 'PUT' | 'DELETE') {
+export class RequestType {
+  public value: RequestTypeValue;
+
+  private constructor(value: RequestTypeValue) {
     this.value = value;
   }
 
-  static create(value: 'POST' | 'GET' | 'PUT' | 'DELETE') {
+  static create(value: RequestTypeValue) {
     return new RequestType(value);
   }
 }

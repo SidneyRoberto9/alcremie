@@ -34,6 +34,16 @@ export class InMemoryTagRepository implements TagRepository {
     return tag;
   }
 
+  async findByName(name: string): Promise<Tag | null> {
+    const tag = this.items.find((tag) => tag.name === name);
+
+    if (!tag) {
+      return null;
+    }
+
+    return tag;
+  }
+
   async findMany({ page, size }: PaginationParams): Promise<Tag[]> {
     const tag = this.items.sort().slice((page - 1) * size, page * size);
 
@@ -47,5 +57,11 @@ export class InMemoryTagRepository implements TagRepository {
 
   async count(): Promise<number> {
     return this.items.length;
+  }
+
+  async findManyByIds(ids: string[]): Promise<Tag[]> {
+    const tags = this.items.filter((tag) => ids.includes(tag.id.toValue()));
+
+    return tags;
   }
 }

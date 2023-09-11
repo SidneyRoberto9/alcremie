@@ -7,6 +7,7 @@ export interface ImageProps {
   isNsfw: boolean;
   assetId: string;
   url: string;
+  size: number;
   updatedAt?: Date | null;
   createdAt: Date;
   tags: Tag[];
@@ -38,6 +39,10 @@ export class Image extends Entity<ImageProps> {
     return this.props.url;
   }
 
+  get size() {
+    return this.props.size;
+  }
+
   get updatedAt() {
     return this.props.updatedAt;
   }
@@ -60,6 +65,10 @@ export class Image extends Entity<ImageProps> {
 
   set url(value: string) {
     this.props.url = value;
+  }
+
+  set size(value: number) {
+    this.props.size = value;
   }
 
   set assetId(value: string) {

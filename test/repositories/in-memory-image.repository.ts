@@ -6,12 +6,22 @@ export class InMemoryImageRepository implements ImageRepository {
   public items: Image[] = [];
 
   async findManyByTagIn(tagId: string, { page, size }: PaginationParams): Promise<Image[]> {
-    const tags = this.items
+    const images = this.items
       .sort()
       .filter((image) => image.tags.find((tag) => tag.id.toValue() === tagId))
       .slice((page - 1) * size, page * size);
 
-    return tags;
+    return images;
+  }
+
+  async findByAssetId(id: string): Promise<Image | null> {
+    const image = this.items.find((image) => image.assetId === id);
+
+    if (!image) {
+      return null;
+    }
+
+    return image;
   }
 
   async findById(id: string): Promise<Image | null> {
