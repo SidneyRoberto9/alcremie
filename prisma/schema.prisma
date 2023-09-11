@@ -50,6 +50,7 @@ model Image {
   isNsfw    Boolean   @default(false) @map("is_nsfw")
   assetId   String    @unique @map("asset_id")
   url       String    @unique
+  size      Int       @default(0)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
