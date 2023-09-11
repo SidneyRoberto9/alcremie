@@ -37,10 +37,10 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async create(user: User): Promise<void> {
-    const data = PrismaUserMapper.toPersistence(user);
+    const convertedUser = PrismaUserMapper.toPersistence(user);
 
     await this.prisma.user.create({
-      data,
+      data: convertedUser,
     });
   }
 

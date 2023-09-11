@@ -5,7 +5,7 @@ import { Request } from '@/domain/alcremie/enterprise/entities/request';
 import { RequestRepository } from '@/domain/alcremie/application/repositories/request.repository';
 
 @Injectable()
-export class PrismaRepository implements RequestRepository {
+export class PrismaRequestRepository implements RequestRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findById(id: string): Promise<Request | null> {
