@@ -6,20 +6,19 @@ Alcremie style app.
 
 - [ ] Deve ser possível se cadastrar pelo google;
 - [ ] Deve ser possível se autenticar pelo google;
-- [ ] Deve ser possível cadastrar uma tag;
+- [x] Deve ser possível cadastrar uma tag;
 - [ ] Deve ser possível buscar as tags;
 - [ ] Deve ser possível o usuário editar uma tag;
 - [ ] Deve ser possível o usuário deletar uma tag;
 - [ ] Deve ser possível buscar as imagens por uma tag;
-- [ ] Deve ser possível enviar uma imagem;
+- [x] Deve ser possível enviar uma imagem;
 - [ ] Deve ser possível buscar as imagens;
 - [ ] Deve ser possível obter uma imagem aleatória;
 - [ ] Deve ser possível o usuário pode favoritar uma imagem;
-- [ ] Deve ser possível o usuário editar uma imagem;
 - [ ] Deve ser possível o usuário deletar uma imagem;
-- [ ] Deve ser possível obter a estatística de quantidade de imagens;
-- [ ] Deve ser possível obter a estatística de quantidade de tags;
-- [ ] Deve ser possível obter a estatística de quantidade de requests;
+- [x] Deve ser possível obter a estatística de quantidade de imagens;
+- [x] Deve ser possível obter a estatística de quantidade de tags;
+- [x] Deve ser possível obter a estatística de quantidade de requests;
 
 ## RNs (Regras de negócio)
 
@@ -32,5 +31,5 @@ Alcremie style app.
 
 - [ ] Cada requisição deve ser salva no banco de dados;
 - [ ] Os dados da aplicação precisam estar persistidos em um banco MongoDB;
-- [ ] Todas listas de dados precisam estar paginadas com no mínimo 1 item e no máximo 25 itens por página;
+- [x] Todas listas de dados precisam estar paginadas com no mínimo 1 item e no máximo 25 itens por página;
 - [ ] O usuário deve ser identificado por um JWT (JSON Web Token);
