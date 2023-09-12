@@ -1,5 +1,6 @@
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { EnvService } from '@/infra/env/env.service';
 import { EnvModule } from '@/infra/env/env.module';
@@ -17,12 +18,13 @@ import { RegisterUserUseCase } from '@/domain/alcremie/application/use-cases/cas
       imports: [EnvModule],
       inject: [EnvService],
       global: true,
+
       useFactory(env: EnvService) {
         const privateKey = env.get('JWT_PRIVATE_KEY');
         const publicKey = env.get('JWT_PUBLIC_KEY');
 
         return {
-          signOptions: { algorithm: 'RS256' },
+          signOptions: { algorithm: 'RS256', expiresIn: '7d' },
           privateKey: Buffer.from(privateKey, 'base64'),
           publicKey: Buffer.from(publicKey, 'base64'),
         };
@@ -30,7 +32,17 @@ import { RegisterUserUseCase } from '@/domain/alcremie/application/use-cases/cas
     }),
   ],
   controllers: [],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, EnvService, RegisterUserUseCase],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtStrategy,
+    },
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
+    EnvService,
+    RegisterUserUseCase,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

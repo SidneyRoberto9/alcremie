@@ -1,27 +1,25 @@
-import { send } from 'process';
 import { Response, Request } from 'express';
-import { Sign } from 'crypto';
 
 import { UseGuards, Res, Req, HttpStatus, Get, Controller } from '@nestjs/common';
+import { Public } from '@/infra/auth/utils/public.decorator';
 import { GoogleOauthGuard } from '@/infra/auth/guards/google-oauth.guard';
 import { AuthService } from '@/infra/auth/auth.service';
-import { SignUser } from '@/infra/auth/@types';
 
-@Controller('auth')
+@Controller('auth/google')
+@Public()
+@UseGuards(GoogleOauthGuard)
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Get('google')
-  @UseGuards(GoogleOauthGuard)
-  async auth() {}
+  @Get()
+  async googleAth() {}
 
-  @Get('google/callback')
-  @UseGuards(GoogleOauthGuard)
-  async googleAuthCallback(@Req() req: Request, @Res() res: Response) {
-    const token = await this.authService.signIn(req.user as SignUser);
+  @Get('callback')
+  async googleAuthCallback(@Req() req: Request) {
+    const token = await this.authService.signIn(req);
 
-    res
-      .cookie('access_token', token, {
+    req.res
+      ?.cookie('access_token', token, {
         maxAge: 2592000000,
         sameSite: true,
         secure: false,

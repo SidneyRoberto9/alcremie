@@ -1,27 +1,23 @@
 import { JwtService } from '@nestjs/jwt';
 import { InternalServerErrorException, Injectable, BadRequestException } from '@nestjs/common';
-import { SignUser, JwtPayload } from '@/infra/auth/@types';
+import { SignUser, JwtPayload } from '@/infra/auth/utils/@types';
 import { User } from '@/domain/alcremie/enterprise/entities/user';
-import { RegisterUserUseCase } from '@/domain/alcremie/application/use-cases/cases/register-user/register-user';
 import { UserRepository } from '@/domain/alcremie/application/repositories/user.repository';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private userRepository: UserRepository,
-    private registerUserUseCase: RegisterUserUseCase,
-  ) {}
+  constructor(private jwtService: JwtService, private userRepository: UserRepository) {}
 
   generateJwt(payload: JwtPayload) {
     return this.jwtService.sign(payload);
   }
 
-  async signIn(user: SignUser) {
-    if (!user) {
+  async signIn(req: any) {
+    if (!req.user) {
       throw new BadRequestException('Unauthenticated');
     }
 
+    const user = req.user as SignUser;
     const userExists = await this.userRepository.findByEmail(user.email);
 
     if (!userExists) {
@@ -56,5 +52,11 @@ export class AuthService {
     };
 
     return this.generateJwt(generateJwtObj);
+  }
+
+  async validateUser(email: string) {
+    const user = await this.userRepository.findByEmail(email);
+
+    return user;
   }
 }

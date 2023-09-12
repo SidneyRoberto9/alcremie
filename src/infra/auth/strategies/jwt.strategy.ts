@@ -1,14 +1,13 @@
-import { ExtractJwt } from 'passport-jwt';
-import { Strategy } from 'passport-google-oauth2';
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Request } from 'express';
 
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { EnvService } from '@/infra/env/env.service';
-import { JwtPayload, jwtPayloadSchema } from '@/infra/auth/@types';
+import { JwtPayload, jwtPayloadSchema } from '@/infra/auth/utils/@types';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(config: EnvService) {
     const publicKey = config.get('JWT_PUBLIC_KEY');
 
@@ -19,14 +18,17 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         token = req.cookies['access_token'];
       }
 
-      return token || ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+      if (token == null) {
+        return ExtractJwt.fromAuthHeaderAsBearerToken();
+      }
+
+      return token;
     };
 
     super({
-      clientID: publicKey,
-      ignoreExpiration: false,
-      secretOrKey: Buffer.from(publicKey, 'base64'),
       jwtFromRequest: extractJwtFromCookie,
+      secretOrKey: Buffer.from(publicKey, 'base64'),
+      algorithms: ['RS256'],
     });
   }
 

@@ -5,10 +5,10 @@ import { VerifyCallback, Strategy } from 'passport-google-oauth2';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { EnvService } from '@/infra/env/env.service';
-import { SignUser } from '@/infra/auth/@types';
+import { SignUser } from '@/infra/auth/utils/@types';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class GoogleStrategy extends PassportStrategy(Strategy) {
   constructor(config: EnvService) {
     const clientId = config.get('GOOGLE_CLIENT_ID');
     const secretKey = config.get('GOOGLE_SECRET_KEY');
