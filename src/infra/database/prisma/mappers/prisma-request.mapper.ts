@@ -10,6 +10,7 @@ export class PrismaRequestMapper {
   static toDomain(raw: PrismaRequest): Request {
     return Request.create(
       {
+        ip: raw.ip,
         requestType: RequestType.create(raw.requestType),
         route: raw.route,
       },
@@ -19,7 +20,8 @@ export class PrismaRequestMapper {
 
   static toPersistence(request: Request): Prisma.RequestUncheckedCreateInput {
     return {
-      id: request.id.toString(),
+      id: request.id.toValue(),
+      ip: request.ip,
       requestType: request.requestType.value as RequestTypeValue,
       route: request.route,
       createdAt: request.createdAt,

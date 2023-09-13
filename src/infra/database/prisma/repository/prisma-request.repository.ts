@@ -35,7 +35,7 @@ export class PrismaRequestRepository implements RequestRepository {
 
     await this.prisma.request.update({
       where: {
-        id: request.id.toString(),
+        id: request.id.toValue(),
       },
       data,
     });

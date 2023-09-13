@@ -9,6 +9,7 @@ import { NotAllowedError } from '@/core/erros/errors/not-allowed.error';
 import { Either, right, left } from '@/core/either';
 
 interface RegisterRequestUseCaseRequest {
+  ip: string;
   requestType: RequestTypeValue;
   route: string;
 }
@@ -20,6 +21,7 @@ export class RegisterRequestUseCase {
   constructor(private requestRepository: RequestRepository) {}
 
   async execute({
+    ip,
     requestType,
     route,
   }: RegisterRequestUseCaseRequest): Promise<RegisterRequestUseCaseResponse> {
@@ -30,6 +32,7 @@ export class RegisterRequestUseCase {
     }
 
     const request = Request.create({
+      ip,
       requestType: RequestType.create(requestType),
       route,
     });

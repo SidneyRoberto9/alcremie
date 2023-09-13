@@ -4,6 +4,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Entity } from '@/core/entities/entity';
 
 export interface RequestProps {
+  ip: string;
   requestType: RequestType;
   route: string;
   createdAt: Date;
@@ -20,6 +21,10 @@ export class Request extends Entity<RequestProps> {
     );
 
     return request;
+  }
+
+  get ip() {
+    return this.props.ip;
   }
 
   get route() {
