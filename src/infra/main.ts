@@ -7,6 +7,7 @@ import { AppModule } from '@/infra/app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.enableCors();
   app.use(cookieParser());
 
   const envService = app.get(ConfigService);
