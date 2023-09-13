@@ -7,7 +7,7 @@ import { EnvModule } from '@/infra/env/env.module';
 import { DatabaseModule } from '@/infra/database/database.module';
 import { JwtStrategy } from '@/infra/auth/strategies/jwt.strategy';
 import { GoogleStrategy } from '@/infra/auth/strategies/google.strategy';
-import { AuthService } from '@/infra/auth/auth.service';
+import { AuthService } from '@/infra/auth/services/auth.service';
 import { RegisterUserUseCase } from '@/domain/alcremie/application/use-cases/cases/register-user/register-user';
 
 @Module({

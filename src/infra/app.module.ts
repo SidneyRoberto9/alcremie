@@ -4,6 +4,7 @@ import { HttpModule } from '@/infra/http/http.module';
 import { EnvModule } from '@/infra/env/env.module';
 import { envSchema } from '@/infra/env/env';
 import { DatabaseModule } from '@/infra/database/database.module';
+import { CloudinaryModule } from '@/infra/cloudinary/cloudinary.module';
 import { AuthModule } from '@/infra/auth/auth.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { AuthModule } from '@/infra/auth/auth.module';
     AuthModule,
     HttpModule,
     DatabaseModule,
+    CloudinaryModule,
     ConfigModule.forRoot({
       validate: (envConfig) => envSchema.parse(envConfig),
       isGlobal: true,

@@ -2,8 +2,8 @@ import { Response, Request } from 'express';
 
 import { UseGuards, Res, Req, HttpStatus, Get, Controller } from '@nestjs/common';
 import { Public } from '@/infra/auth/utils/public.decorator';
+import { AuthService } from '@/infra/auth/services/auth.service';
 import { GoogleOauthGuard } from '@/infra/auth/guards/google-oauth.guard';
-import { AuthService } from '@/infra/auth/auth.service';
 
 @Controller('auth/google')
 @Public()
