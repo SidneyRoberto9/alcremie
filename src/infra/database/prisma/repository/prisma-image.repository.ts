@@ -94,7 +94,7 @@ export class PrismaImageRepository implements ImageRepository {
   async delete(image: Image): Promise<void> {
     await this.prisma.image.delete({
       where: {
-        id: image.id.toString(),
+        id: image.id.toValue(),
       },
     });
   }
@@ -104,7 +104,7 @@ export class PrismaImageRepository implements ImageRepository {
 
     await this.prisma.image.update({
       where: {
-        id: image.id.toString(),
+        id: image.id.toValue(),
       },
       data,
     });

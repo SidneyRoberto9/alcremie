@@ -49,7 +49,7 @@ export class PrismaUserRepository implements UserRepository {
 
     await this.prisma.user.update({
       where: {
-        id: user.id.toString(),
+        id: user.id.toValue(),
       },
       data,
     });

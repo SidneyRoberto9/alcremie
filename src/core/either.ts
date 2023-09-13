@@ -21,11 +21,11 @@ export class Right<L, R> {
     this.value = value;
   }
 
-  isRight(): this is Left<L, R> {
+  isRight(): this is Right<L, R> {
     return true;
   }
 
-  isLeft(): this is Left<L, R> {
+  isLeft(): this is Right<L, R> {
     return false;
   }
 }

@@ -83,7 +83,7 @@ export class PrismaTagRepository implements TagRepository {
   async delete(tag: Tag): Promise<void> {
     await this.prisma.tag.delete({
       where: {
-        id: tag.id.toString(),
+        id: tag.id.toValue(),
       },
     });
   }
@@ -93,7 +93,7 @@ export class PrismaTagRepository implements TagRepository {
 
     await this.prisma.tag.update({
       where: {
-        id: tag.id.toString(),
+        id: tag.id.toValue(),
       },
       data,
     });

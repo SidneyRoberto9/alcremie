@@ -16,9 +16,13 @@ export class PrismaTagMapper {
 
   static toPersistence(tag: Tag): Prisma.TagUncheckedCreateInput {
     return {
-      id: tag.id.toString(),
+      id: tag.id.toValue(),
       name: tag.name,
       slug: tag.slug.value,
+      imageIDs: tag.images.map((image) => image.id.toValue()),
+      images: {
+        connect: tag.images.map((image) => ({ id: image.id.toValue() })),
+      },
     };
   }
 }

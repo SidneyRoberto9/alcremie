@@ -8,7 +8,7 @@ interface CreateTagUseCaseRequest {
   name: string;
 }
 
-type CreateTagUseCaseResponse = Either<ConflictException, { tag: Tag }>;
+type CreateTagUseCaseResponse = Either<null, { tag: Tag }>;
 
 @Injectable()
 export class CreateTagUseCase {
@@ -18,7 +18,7 @@ export class CreateTagUseCase {
     const tagWithSameSlug = await this.tagRepository.findBySlug(Slug.createFromText(name).value);
 
     if (tagWithSameSlug) {
-      return left(new ConflictException());
+      return right({ tag: tagWithSameSlug });
     }
 
     const tag = Tag.create({

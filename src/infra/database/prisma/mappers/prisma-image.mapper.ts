@@ -17,12 +17,16 @@ export class PrismaImageMapper {
 
   static toPersistence(image: Image): Prisma.ImageUncheckedCreateInput {
     return {
-      id: image.id.toString(),
+      id: image.id.toValue(),
       assetId: image.assetId,
       url: image.url,
       isNsfw: image.isNsfw,
       size: image.size,
       updatedAt: image.updatedAt,
+      tagsIDs: image.tags.map((tag) => tag.id.toValue()),
+      tags: {
+        connect: image.tags.map((tag) => ({ id: tag.id.toValue() })),
+      },
     };
   }
 }

@@ -40,7 +40,11 @@ describe('Create Tag', () => {
       name: newTag.name,
     });
 
-    expect(result.isLeft()).toBe(true);
-    expect(result.value).toBeInstanceOf(ConflictException);
+    expect(result.isRight()).toBe(true);
+    expect(result.value).toEqual({
+      tag: expect.objectContaining({
+        name: 'Same Name',
+      }),
+    });
   });
 });

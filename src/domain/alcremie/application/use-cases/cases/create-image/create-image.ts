@@ -41,7 +41,7 @@ export class CreateImageUseCase {
       tags,
     });
 
-    this.imageRepository.create(image);
+    await this.imageRepository.create(image);
 
     return right({ image });
   }
