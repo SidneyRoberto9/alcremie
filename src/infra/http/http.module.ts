@@ -15,6 +15,7 @@ import { CloudinaryService } from '@/infra/cloudinary/services/cloudinary.servic
 import { CloudinaryModule } from '@/infra/cloudinary/cloudinary.module';
 import { AuthModule } from '@/infra/auth/auth.module';
 import { RegisterRequestUseCase } from '@/domain/alcremie/application/use-cases/cases/register-request/register-request';
+import { FetchTagsUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-tags/fetch-tags';
 import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
 import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
 import { FavoriteImageUseCase } from '@/domain/alcremie/application/use-cases/cases/favorite-image/favorite-image';
@@ -40,6 +41,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     CloudinaryService,
 
     // Use Cases
+    FetchTagsUseCase,
     CreateTagUseCase,
     FetchImagesUseCase,
     CreateImageUseCase,
