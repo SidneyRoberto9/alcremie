@@ -1,4 +1,5 @@
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { TagService } from '@/infra/http/services/tag.service';
 import { ExternalService } from '@/infra/http/services/external.service';
@@ -28,7 +29,21 @@ import { CreateTagUseCase } from '@/domain/alcremie/application/use-cases/cases/
 import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/cases/create-image/create-image';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, CloudinaryModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    CloudinaryModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 60,
+      },
+      {
+        ttl: 1000,
+        limit: 3,
+      },
+    ]),
+  ],
   controllers: [
     AuthController,
     UploadController,
@@ -63,6 +78,12 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     {
       provide: APP_INTERCEPTOR,
       useClass: RequestInterceptor,
+    },
+
+    //guard
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
