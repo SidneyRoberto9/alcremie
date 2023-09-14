@@ -19,7 +19,10 @@ export class UploadController {
 
     for (let file of files) {
       const data = await this.externalService.uploadImage(file);
-      images.push(data);
+
+      if (data) {
+        images.push(data);
+      }
     }
 
     return {

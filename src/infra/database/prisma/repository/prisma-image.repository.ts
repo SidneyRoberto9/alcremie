@@ -42,10 +42,8 @@ export class PrismaImageRepository implements ImageRepository {
       take: size,
       skip: (page - 1) * size,
       where: {
-        tags: {
-          some: {
-            id: tagId,
-          },
+        tagsIDs: {
+          has: tagId,
         },
       },
     });

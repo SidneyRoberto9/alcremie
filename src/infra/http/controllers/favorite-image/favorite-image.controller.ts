@@ -1,5 +1,4 @@
-import { UseGuards, Param, Get, Controller, BadRequestException } from '@nestjs/common';
-import { Roles } from '@/infra/auth/utils/roles.decorator';
+import { UseGuards, Param, NotFoundException, Get, Controller } from '@nestjs/common';
 import { CurrentUser } from '@/infra/auth/utils/current-user.decorator';
 import { JwtPayload } from '@/infra/auth/utils/@types';
 import { JwtAuthGuard } from '@/infra/auth/guards/jwt-auth.guard';
@@ -21,12 +20,12 @@ export class FavoriteImageController {
       userId: user.sub,
     });
 
-    if (result.isRight()) {
-      return {
-        isFavorite: result.value['isFavorite'],
-      };
+    if (result.isLeft()) {
+      throw new NotFoundException();
     }
 
-    throw new BadRequestException();
+    return {
+      isFavorite: result.value.isFavorite,
+    };
   }
 }

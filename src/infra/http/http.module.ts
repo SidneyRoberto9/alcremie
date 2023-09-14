@@ -5,6 +5,7 @@ import { ExternalService } from '@/infra/http/services/external.service';
 import { RequestInterceptor } from '@/infra/http/interceptors/request.interceptor';
 import { UploadController } from '@/infra/http/controllers/upload/upload.controller';
 import { FetchTagController } from '@/infra/http/controllers/fetch-tag/fetch-tag.controller';
+import { FetchImagesController } from '@/infra/http/controllers/fetch-images/fetch-images.controller';
 import { FavoriteImageController } from '@/infra/http/controllers/favorite-image/favorite-image.controller';
 import { DeleteImageController } from '@/infra/http/controllers/delete-image/delete-image.controller';
 import { AuthController } from '@/infra/http/controllers/auth/auth.controller';
@@ -14,6 +15,8 @@ import { CloudinaryService } from '@/infra/cloudinary/services/cloudinary.servic
 import { CloudinaryModule } from '@/infra/cloudinary/cloudinary.module';
 import { AuthModule } from '@/infra/auth/auth.module';
 import { RegisterRequestUseCase } from '@/domain/alcremie/application/use-cases/cases/register-request/register-request';
+import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
+import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
 import { FavoriteImageUseCase } from '@/domain/alcremie/application/use-cases/cases/favorite-image/favorite-image';
 import { DeleteImageUseCase } from '@/domain/alcremie/application/use-cases/cases/delete-image/delete-image';
 import { CreateTagUseCase } from '@/domain/alcremie/application/use-cases/cases/create-tag/create-tag';
@@ -23,8 +26,9 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
   imports: [DatabaseModule, AuthModule, CloudinaryModule],
   controllers: [
     AuthController,
-    FetchTagController,
     UploadController,
+    FetchTagController,
+    FetchImagesController,
     DeleteImageController,
     FavoriteImageController,
   ],
@@ -37,10 +41,12 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
 
     // Use Cases
     CreateTagUseCase,
+    FetchImagesUseCase,
     CreateImageUseCase,
     DeleteImageUseCase,
     FavoriteImageUseCase,
     RegisterRequestUseCase,
+    FetchImagesByTagUseCase,
 
     //interceptors
     RequestInterceptor,

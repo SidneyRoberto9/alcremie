@@ -29,7 +29,7 @@ export class ExternalService {
 
     const tagIdList = await this.tagService.validateTagNameListInTagIdList(tagList);
 
-    const { isLeft, value } = await this.createImageUseCase.execute({
+    const result = await this.createImageUseCase.execute({
       assetId,
       isNsfw,
       url,
@@ -37,11 +37,11 @@ export class ExternalService {
       tagIds: tagIdList,
     });
 
-    if (isLeft()) {
+    if (result.isLeft()) {
       return null;
     }
 
-    return value['image'];
+    return result.value.image;
   }
 
   async uploadImageToCloudinary(file: MulterFile): Promise<CloudinaryUploadDataResponse> {
