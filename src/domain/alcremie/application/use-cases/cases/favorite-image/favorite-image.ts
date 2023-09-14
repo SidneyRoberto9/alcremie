@@ -31,16 +31,26 @@ export class FavoriteImageUseCase {
       return left(new ResourceNotFoundError());
     }
 
-    const favoritesImages = user.favorites;
-    const isImageAlreadyFavorite = favoritesImages.find(
-      (favoriteImage) => favoriteImage.id === image.id,
+    const favoritesImagesId = user.favorites;
+
+    const isImageAlreadyFavorite = favoritesImagesId.find(
+      (favoriteImage) => favoriteImage === image.id.toValue(),
     );
 
     if (isImageAlreadyFavorite) {
-      user.favorites = favoritesImages.filter((favoriteImage) => favoriteImage.id !== image.id);
+      user.favorites = favoritesImagesId.filter(
+        (favoriteImage) => favoriteImage !== image.id.toValue(),
+      );
+      image.users = image.users.filter((userId) => userId !== user.id.toValue());
+
+      await this.userRepository.removeConnectionFromFavoriteImage(userId, imageId);
     } else {
-      user.favorites = [...favoritesImages, image];
+      image.users = [...image.users, user.id.toValue()];
+      user.favorites = [...favoritesImagesId, image.id.toValue()];
     }
+
+    await this.userRepository.save(user);
+    await this.imageRepository.save(image);
 
     return right({ isFavorite: !isImageAlreadyFavorite });
   }

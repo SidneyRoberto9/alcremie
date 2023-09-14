@@ -25,8 +25,6 @@ export class CreateImageUseCase {
     url,
     tagIds,
   }: CreateImageUseCaseRequest): Promise<CreateImageUseCaseResponse> {
-    const tags = await this.tagRepository.findManyByIds(tagIds);
-
     const imageWithSameAssetId = await this.imageRepository.findByAssetId(assetId);
 
     if (imageWithSameAssetId) {
@@ -38,7 +36,7 @@ export class CreateImageUseCase {
       isNsfw,
       size,
       url,
-      tags,
+      tags: tagIds,
     });
 
     await this.imageRepository.create(image);

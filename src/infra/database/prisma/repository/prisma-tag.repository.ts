@@ -89,7 +89,7 @@ export class PrismaTagRepository implements TagRepository {
   }
 
   async save(tag: Tag): Promise<void> {
-    const data = PrismaTagMapper.toPersistence(tag);
+    const data = PrismaTagMapper.toUpdate(tag);
 
     await this.prisma.tag.update({
       where: {

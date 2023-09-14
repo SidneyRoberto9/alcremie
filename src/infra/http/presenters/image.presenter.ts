@@ -10,11 +10,7 @@ export class ImagePresenter {
       url: image.url,
       createdAt: image.createdAt,
       updatedAt: image.updatedAt,
-      tags: image.tags.map((tag) => ({
-        id: tag.id.toValue(),
-        name: tag.name,
-        slug: tag.slug.value,
-      })),
+      tags: image.tags.map((tag) => ({ id: tag })),
     };
   }
 }

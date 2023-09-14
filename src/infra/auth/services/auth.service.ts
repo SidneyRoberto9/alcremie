@@ -18,7 +18,7 @@ export class AuthService {
     }
 
     const user = req.user as SignUser;
-    const userExists = await this.userRepository.findByEmail(user.email);
+    const userExists = await this.validateUser(user);
 
     if (!userExists) {
       return this.registerUser(user);
@@ -48,14 +48,14 @@ export class AuthService {
   async generateJwtWithUser(user: User) {
     const generateJwtObj: JwtPayload = {
       sub: user.id.toValue(),
-      email: user.email,
+      role: user.role.value,
     };
 
     return this.generateJwt(generateJwtObj);
   }
 
-  async validateUser(email: string) {
-    const user = await this.userRepository.findByEmail(email);
+  async validateUser(data: SignUser) {
+    const user = await this.userRepository.findByEmail(data.email);
 
     return user;
   }

@@ -1,3 +1,4 @@
+import { Role } from '@/domain/alcremie/enterprise/entities/values-objects/role';
 import { Image } from '@/domain/alcremie/enterprise/entities/image';
 import { Optional } from '@/core/types/optional';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
@@ -8,12 +9,13 @@ export interface UserProps {
   email: string;
   avatarUrl?: string;
   createdAt: Date;
-  favorites: Image[];
+  favorites: string[];
+  role: Role;
 }
 
 export class User extends Entity<UserProps> {
   static create(
-    props: Optional<UserProps, 'avatarUrl' | 'createdAt' | 'favorites'>,
+    props: Optional<UserProps, 'avatarUrl' | 'createdAt' | 'favorites' | 'role'>,
     id?: UniqueEntityID,
   ): User {
     const user = new User(
@@ -22,6 +24,7 @@ export class User extends Entity<UserProps> {
         avatarUrl: props.avatarUrl ?? undefined,
         createdAt: props.createdAt ?? new Date(),
         favorites: props.favorites ?? [],
+        role: props.role ?? Role.create('DEFAULT'),
       },
       id,
     );
@@ -49,7 +52,11 @@ export class User extends Entity<UserProps> {
     return this.props.favorites;
   }
 
-  set favorites(favorites: Image[]) {
+  get role() {
+    return this.props.role;
+  }
+
+  set favorites(favorites: string[]) {
     this.props.favorites = favorites;
   }
 }

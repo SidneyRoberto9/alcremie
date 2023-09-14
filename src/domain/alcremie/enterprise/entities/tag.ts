@@ -7,7 +7,7 @@ import { Entity } from '@/core/entities/entity';
 export interface TagProps {
   name: string;
   slug: Slug;
-  images: Image[];
+  images: string[];
 }
 
 export class Tag extends Entity<TagProps> {
@@ -36,7 +36,7 @@ export class Tag extends Entity<TagProps> {
     return this.props.images;
   }
 
-  set images(value: Image[]) {
+  set images(value: string[]) {
     this.props.images = value;
   }
 

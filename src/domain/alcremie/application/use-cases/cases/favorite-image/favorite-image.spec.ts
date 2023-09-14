@@ -32,7 +32,7 @@ describe('Favorite Image', () => {
     expect(result.value).toEqual({
       isFavorite: expect.any(Boolean),
     });
-    expect(inMemoryUserRepository.items[0].favorites).toEqual([image]);
+    expect(inMemoryUserRepository.items[0].favorites).toEqual([image.id.toValue()]);
   });
 
   it('should be able to favorite already favorite image', async () => {
@@ -42,7 +42,7 @@ describe('Favorite Image', () => {
     const image = makeImage();
     inMemoryImageRepository.items.push(image);
 
-    user.favorites = [image];
+    user.favorites = [image.id.toValue()];
 
     const result = await sut.execute({
       imageId: image.id.toValue(),

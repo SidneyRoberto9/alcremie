@@ -5,4 +5,5 @@ export abstract class UserRepository {
   abstract findByEmail(email: string): Promise<User | null>;
   abstract create(user: User): Promise<void>;
   abstract save(user: User): Promise<void>;
+  abstract removeConnectionFromFavoriteImage(userId: string, imageId: string): Promise<void>;
 }

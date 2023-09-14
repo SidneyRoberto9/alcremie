@@ -33,14 +33,14 @@ import { RegisterUserUseCase } from '@/domain/alcremie/application/use-cases/cas
   ],
   controllers: [],
   providers: [
+    EnvService,
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
     {
       provide: APP_GUARD,
       useClass: JwtStrategy,
     },
-    AuthService,
-    JwtStrategy,
-    GoogleStrategy,
-    EnvService,
     RegisterUserUseCase,
   ],
   exports: [AuthService],

@@ -8,6 +8,21 @@ import { UserRepository } from '@/domain/alcremie/application/repositories/user.
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async removeConnectionFromFavoriteImage(userId: string, imageId: string) {
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        favoriteImages: {
+          disconnect: {
+            id: imageId,
+          },
+        },
+      },
+    });
+  }
+
   async findById(id: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -45,7 +60,7 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async save(user: User): Promise<void> {
-    const data = PrismaUserMapper.toPersistence(user);
+    const data = PrismaUserMapper.toUpdate(user);
 
     await this.prisma.user.update({
       where: {

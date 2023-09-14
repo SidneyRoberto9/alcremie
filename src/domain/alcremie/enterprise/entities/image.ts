@@ -10,16 +10,21 @@ export interface ImageProps {
   size: number;
   updatedAt?: Date | null;
   createdAt: Date;
-  tags: Tag[];
+  tags: string[];
+  users: string[];
 }
 
 export class Image extends Entity<ImageProps> {
-  static create(props: Optional<ImageProps, 'createdAt' | 'tags'>, id?: UniqueEntityID): Image {
+  static create(
+    props: Optional<ImageProps, 'createdAt' | 'tags' | 'users'>,
+    id?: UniqueEntityID,
+  ): Image {
     const image = new Image(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
         tags: props.tags ?? [],
+        users: props.users ?? [],
       },
       id,
     );
@@ -55,7 +60,15 @@ export class Image extends Entity<ImageProps> {
     return this.props.tags;
   }
 
-  set tags(value: Tag[]) {
+  get users() {
+    return this.props.users;
+  }
+
+  set users(value: string[]) {
+    this.props.users = value;
+  }
+
+  set tags(value: string[]) {
     this.props.tags = value;
   }
 

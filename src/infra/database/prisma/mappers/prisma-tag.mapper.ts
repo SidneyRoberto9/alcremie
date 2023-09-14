@@ -9,6 +9,7 @@ export class PrismaTagMapper {
       {
         name: raw.name,
         slug: Slug.createFromText(raw.name),
+        images: raw.imageIDs,
       },
       new UniqueEntityID(raw.id),
     );
@@ -19,9 +20,20 @@ export class PrismaTagMapper {
       id: tag.id.toValue(),
       name: tag.name,
       slug: tag.slug.value,
-      imageIDs: tag.images.map((image) => image.id.toValue()),
+      imageIDs: tag.images,
       images: {
-        connect: tag.images.map((image) => ({ id: image.id.toValue() })),
+        connect: tag.images.map((image) => ({ id: image })),
+      },
+    };
+  }
+
+  static toUpdate(tag: Tag): Prisma.TagUncheckedUpdateInput {
+    return {
+      name: tag.name,
+      slug: tag.slug.value,
+      imageIDs: tag.images,
+      images: {
+        connect: tag.images.map((image) => ({ id: image })),
       },
     };
   }

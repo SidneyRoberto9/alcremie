@@ -4,6 +4,10 @@ import { UserRepository } from '@/domain/alcremie/application/repositories/user.
 export class InMemoryUserRepository implements UserRepository {
   public items: User[] = [];
 
+  async removeConnectionFromFavoriteImage(userId: string, imageId: string) {
+    return await Promise.resolve();
+  }
+
   async findById(id: string): Promise<User | null> {
     const user = this.items.find((user) => user.id.toValue() === id);
 

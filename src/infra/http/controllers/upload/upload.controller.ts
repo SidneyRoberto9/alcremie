@@ -5,6 +5,7 @@ import { UseInterceptors, UploadedFiles, Post, Controller, Bind } from '@nestjs/
 import { MulterFiles } from '@/infra/http/utils/multer.file';
 import { ExternalService } from '@/infra/http/services/external.service';
 import { ImagePresenter } from '@/infra/http/presenters/image.presenter';
+import { Image } from '@/domain/alcremie/enterprise/entities/image';
 
 @Controller('upload')
 export class UploadController {
@@ -14,7 +15,7 @@ export class UploadController {
   @UseInterceptors(FilesInterceptor('image'))
   @Bind(UploadedFiles())
   async uploadFile(files: MulterFiles) {
-    let images: any[] = [];
+    let images: Image[] = [];
 
     for (let file of files) {
       const data = await this.externalService.uploadImage(file);

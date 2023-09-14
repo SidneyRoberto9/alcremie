@@ -100,7 +100,7 @@ export class PrismaImageRepository implements ImageRepository {
   }
 
   async save(image: Image): Promise<void> {
-    const data = PrismaImageMapper.toPersistence(image);
+    const data = PrismaImageMapper.toUpdate(image);
 
     await this.prisma.image.update({
       where: {
