@@ -5,7 +5,7 @@ export class Left<L, R> {
     this.value = value;
   }
 
-  isRight(): this is Left<L, R> {
+  isRight(): this is Right<L, R> {
     return false;
   }
 
@@ -25,7 +25,7 @@ export class Right<L, R> {
     return true;
   }
 
-  isLeft(): this is Right<L, R> {
+  isLeft(): this is Left<L, R> {
     return false;
   }
 }
