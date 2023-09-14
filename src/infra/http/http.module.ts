@@ -4,6 +4,7 @@ import { TagService } from '@/infra/http/services/tag.service';
 import { ExternalService } from '@/infra/http/services/external.service';
 import { RequestInterceptor } from '@/infra/http/interceptors/request.interceptor';
 import { UploadController } from '@/infra/http/controllers/upload/upload.controller';
+import { GetStatusController } from '@/infra/http/controllers/get-status/get-status.controller';
 import { FetchTagController } from '@/infra/http/controllers/fetch-tag/fetch-tag.controller';
 import { FetchImagesController } from '@/infra/http/controllers/fetch-images/fetch-images.controller';
 import { FavoriteImageController } from '@/infra/http/controllers/favorite-image/favorite-image.controller';
@@ -15,6 +16,7 @@ import { CloudinaryService } from '@/infra/cloudinary/services/cloudinary.servic
 import { CloudinaryModule } from '@/infra/cloudinary/cloudinary.module';
 import { AuthModule } from '@/infra/auth/auth.module';
 import { RegisterRequestUseCase } from '@/domain/alcremie/application/use-cases/cases/register-request/register-request';
+import { GetStatisticsUseCase } from '@/domain/alcremie/application/use-cases/cases/get-statistics/get-statistics';
 import { FetchTagsUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-tags/fetch-tags';
 import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
 import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
@@ -29,8 +31,9 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     AuthController,
     UploadController,
     FetchTagController,
-    FetchImagesController,
+    GetStatusController,
     DeleteImageController,
+    FetchImagesController,
     FavoriteImageController,
   ],
   providers: [
@@ -43,10 +46,11 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     // Use Cases
     FetchTagsUseCase,
     CreateTagUseCase,
-    FetchImagesUseCase,
     CreateImageUseCase,
     DeleteImageUseCase,
+    FetchImagesUseCase,
     FavoriteImageUseCase,
+    GetStatisticsUseCase,
     RegisterRequestUseCase,
     FetchImagesByTagUseCase,
 
