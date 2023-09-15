@@ -90,11 +90,46 @@ export class PrismaImageRepository implements ImageRepository {
   }
 
   async delete(image: Image): Promise<void> {
-    await this.prisma.image.delete({
+    const tagsIdInImage = image.tags.map((tag) => tag);
+
+    const tags = await this.prisma.tag.findMany({
       where: {
-        id: image.id.toValue(),
+        id: {
+          in: tagsIdInImage,
+        },
       },
     });
+
+    await this.prisma.$transaction([
+      this.prisma.image.update({
+        where: {
+          id: image.id.toValue(),
+        },
+        data: {
+          tags: {
+            disconnect: tagsIdInImage.map((tagId) => ({ id: tagId })),
+          },
+        },
+      }),
+      this.prisma.image.delete({
+        where: {
+          id: image.id.toValue(),
+        },
+      }),
+    ]);
+
+    for (let tag of tags) {
+      await this.prisma.tag.update({
+        where: {
+          id: tag.id,
+        },
+        data: {
+          imageIDs: {
+            set: tag.imageIDs.filter((imageId) => imageId !== image.id.toValue()),
+          },
+        },
+      });
+    }
   }
 
   async save(image: Image): Promise<void> {

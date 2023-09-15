@@ -26,7 +26,7 @@ export class CreateTagUseCase {
       slug: Slug.createFromText(name),
     });
 
-    this.tagRepository.create(tag);
+    await this.tagRepository.create(tag);
 
     return right({ tag });
   }

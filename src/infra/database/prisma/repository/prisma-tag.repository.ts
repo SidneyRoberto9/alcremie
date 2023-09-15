@@ -9,6 +9,21 @@ import { PaginationParams } from '@/core/repositories/pagination-params';
 export class PrismaTagRepository implements TagRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async addManyImageRelation(tagIdList: string[], imageId: string): Promise<void> {
+    await this.prisma.tag.updateMany({
+      where: {
+        id: {
+          in: tagIdList,
+        },
+      },
+      data: {
+        imageIDs: {
+          push: imageId,
+        },
+      },
+    });
+  }
+
   async findById(id: string): Promise<Tag | null> {
     const tag = await this.prisma.tag.findUnique({
       where: {

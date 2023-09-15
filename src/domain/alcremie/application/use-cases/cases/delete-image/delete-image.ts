@@ -11,7 +11,7 @@ type DeleteImageUseCaseResponse = Either<ResourceNotFoundError, null>;
 
 @Injectable()
 export class DeleteImageUseCase {
-  constructor(private imageRepository: ImageRepository) {}
+  constructor(private readonly imageRepository: ImageRepository) {}
 
   async execute({ imageId }: DeleteImageUseCaseRequest): Promise<DeleteImageUseCaseResponse> {
     const image = await this.imageRepository.findById(imageId);

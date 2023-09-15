@@ -40,6 +40,7 @@ export class CreateImageUseCase {
     });
 
     await this.imageRepository.create(image);
+    await this.tagRepository.addManyImageRelation(tagIds, image.id.toValue());
 
     return right({ image });
   }
