@@ -1,7 +1,5 @@
-import { ConflictException } from '@nestjs/common';
 import { InMemoryTagRepository } from '@/test/repositories/in-memory-tag.repository';
 import { makeTag } from '@/test/factory/make-tag';
-import { Slug } from '@/domain/alcremie/enterprise/entities/values-objects/slug';
 import { FetchTagsUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-tags/fetch-tags';
 
 let inMemoryTagRepository: InMemoryTagRepository;

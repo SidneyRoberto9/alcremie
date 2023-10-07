@@ -13,7 +13,6 @@ export class PrismaImageMapper {
         url: raw.url,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
-        tags: raw.tagsIDs,
       },
       new UniqueEntityID(raw.id),
     );
@@ -28,14 +27,6 @@ export class PrismaImageMapper {
       size: image.size,
       updatedAt: image.updatedAt,
       createdAt: image.createdAt,
-      tagsIDs: image.tags,
-      tags: {
-        connect: image.tags.map((tag) => ({ id: tag })),
-      },
-      usersIDs: image.users,
-      users: {
-        connect: image.users.map((user) => ({ id: user })),
-      },
     };
   }
 
@@ -47,14 +38,6 @@ export class PrismaImageMapper {
       size: image.size,
       updatedAt: image.updatedAt,
       createdAt: image.createdAt,
-      tagsIDs: image.tags,
-      tags: {
-        connect: image.tags.map((tag) => ({ id: tag })),
-      },
-      usersIDs: image.users,
-      users: {
-        connect: image.users.map((user) => ({ id: user })),
-      },
     };
   }
 }

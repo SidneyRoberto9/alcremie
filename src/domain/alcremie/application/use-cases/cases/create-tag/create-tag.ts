@@ -2,7 +2,7 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { Slug } from '@/domain/alcremie/enterprise/entities/values-objects/slug';
 import { Tag } from '@/domain/alcremie/enterprise/entities/tag';
 import { TagRepository } from '@/domain/alcremie/application/repositories/tag.repository';
-import { Either, right, left } from '@/core/either';
+import { Either, right } from '@/core/either';
 
 interface CreateTagUseCaseRequest {
   name: string;

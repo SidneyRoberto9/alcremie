@@ -1,17 +1,21 @@
-import { ObjectId } from 'bson';
+import { randomUUID } from 'node:crypto';
 
 export class UniqueEntityID {
-  private value: ObjectId;
+  private value: string;
 
   constructor(value?: string) {
-    this.value = new ObjectId(value);
+    this.value = value ?? randomUUID();
   }
 
   equals(id: UniqueEntityID): boolean {
-    return id.toValue() === this.value.toString();
+    return id.toValue() === this.value;
+  }
+
+  toString(): string {
+    return this.value;
   }
 
   toValue(): string {
-    return this.value.toHexString();
+    return this.value;
   }
 }

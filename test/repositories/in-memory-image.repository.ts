@@ -8,7 +8,7 @@ export class InMemoryImageRepository implements ImageRepository {
   async findManyByTagIn(tagId: string, { page, size }: PaginationParams): Promise<Image[]> {
     const images = this.items
       .sort()
-      .filter((image) => image.tags.find((tag) => tag.id.toValue() === tagId))
+      .filter((image) => image.tags.some((tag) => tag.id.toValue() === tagId))
       .slice((page - 1) * size, page * size);
 
     return images;

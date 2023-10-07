@@ -8,23 +8,18 @@ export interface ImageProps {
   assetId: string;
   url: string;
   size: number;
-  updatedAt?: Date | null;
   createdAt: Date;
-  tags: string[];
-  users: string[];
+  updatedAt?: Date | null;
+  tags: Tag[];
 }
 
 export class Image extends Entity<ImageProps> {
-  static create(
-    props: Optional<ImageProps, 'createdAt' | 'tags' | 'users'>,
-    id?: UniqueEntityID,
-  ): Image {
+  static create(props: Optional<ImageProps, 'createdAt' | 'tags'>, id?: UniqueEntityID): Image {
     const image = new Image(
       {
         ...props,
-        createdAt: props.createdAt ?? new Date(),
         tags: props.tags ?? [],
-        users: props.users ?? [],
+        createdAt: props.createdAt ?? new Date(),
       },
       id,
     );
@@ -56,22 +51,6 @@ export class Image extends Entity<ImageProps> {
     return this.props.createdAt;
   }
 
-  get tags() {
-    return this.props.tags;
-  }
-
-  get users() {
-    return this.props.users;
-  }
-
-  set users(value: string[]) {
-    this.props.users = value;
-  }
-
-  set tags(value: string[]) {
-    this.props.tags = value;
-  }
-
   set isNsfw(value: boolean) {
     this.props.isNsfw = value;
   }
@@ -86,5 +65,13 @@ export class Image extends Entity<ImageProps> {
 
   set assetId(value: string) {
     this.props.assetId = value;
+  }
+
+  get tags() {
+    return this.props.tags;
+  }
+
+  set tags(value: Tag[]) {
+    this.props.tags = value;
   }
 }

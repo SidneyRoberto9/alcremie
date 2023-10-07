@@ -1,6 +1,7 @@
 import { ConflictException } from '@nestjs/common';
 import { InMemoryTagRepository } from '@/test/repositories/in-memory-tag.repository';
 import { InMemoryImageRepository } from '@/test/repositories/in-memory-image.repository';
+import { makeTag } from '@/test/factory/make-tag';
 import { makeImage } from '@/test/factory/make-image';
 import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/cases/create-image/create-image';
 
@@ -17,13 +18,16 @@ describe('Create Image', () => {
 
   it('should be able to create a new image', async () => {
     const newImage = makeImage();
+    const newTag = makeTag();
+
+    inMemoryTagRepository.items.push(newTag);
 
     const result = await sut.execute({
       assetId: newImage.assetId,
       isNsfw: newImage.isNsfw,
       size: newImage.size,
       url: newImage.url,
-      tagIds: newImage.tags.map((tag) => tag.id.toValue()),
+      tagIds: [newTag.id.toValue()],
     });
 
     expect(result.isRight()).toBe(true);
@@ -38,7 +42,9 @@ describe('Create Image', () => {
     const newImage = makeImage({
       assetId: 'same-asset-id',
     });
+    const newTag = makeTag();
 
+    inMemoryTagRepository.items.push(newTag);
     inMemoryImageRepository.items.push(newImage);
 
     const result = await sut.execute({
@@ -46,7 +52,7 @@ describe('Create Image', () => {
       isNsfw: newImage.isNsfw,
       size: newImage.size,
       url: newImage.url,
-      tagIds: newImage.tags.map((tag) => tag.id.toValue()),
+      tagIds: [newTag.id.toValue()],
     });
 
     expect(result.isLeft()).toBe(true);

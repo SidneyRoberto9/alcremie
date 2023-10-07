@@ -1,5 +1,3 @@
-import { ObjectId } from 'bson';
-
 import { User as PrismaUser, Prisma } from '@prisma/client';
 import { Role } from '@/domain/alcremie/enterprise/entities/values-objects/role';
 import { User } from '@/domain/alcremie/enterprise/entities/user';
@@ -14,7 +12,6 @@ export class PrismaUserMapper {
         avatarUrl: raw.avatarUrl ?? '',
         role: Role.create(raw.role),
         createdAt: raw.createdAt,
-        favorites: raw.favoriteImagesIDs,
       },
       new UniqueEntityID(raw.id),
     );
@@ -27,10 +24,6 @@ export class PrismaUserMapper {
       avatarUrl: user.avatarUrl,
       role: user.role.value,
       createdAt: user.createdAt,
-      favoriteImagesIDs: user.favorites,
-      favoriteImages: {
-        connect: user.favorites.map((image) => ({ id: image })),
-      },
     };
   }
 
@@ -41,10 +34,6 @@ export class PrismaUserMapper {
       avatarUrl: user.avatarUrl,
       role: user.role.value,
       createdAt: user.createdAt,
-      favoriteImagesIDs: user.favorites,
-      favoriteImages: {
-        connect: user.favorites.map((image) => ({ id: image })),
-      },
     };
   }
 }

@@ -31,16 +31,17 @@ export class CreateImageUseCase {
       return left(new ConflictException());
     }
 
+    const tags = await this.tagRepository.findManyByIds(tagIds);
+
     const image = Image.create({
       assetId,
       isNsfw,
       size,
       url,
-      tags: tagIds,
+      tags,
     });
 
-    await this.imageRepository.create(image);
-    await this.tagRepository.addManyImageRelation(tagIds, image.id.toValue());
+    await this.imageRepository.create(image, tagIds);
 
     return right({ image });
   }

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from '@/domain/alcremie/application/repositories/user.repository';
-import { ImageRepository } from '@/domain/alcremie/application/repositories/image.repository';
+import { Favorite } from '@/domain/alcremie/enterprise/entities/favorite';
+import { FavoriteRepository } from '@/domain/alcremie/application/repositories/favorite.repository';
 import { ResourceNotFoundError } from '@/core/erros/errors/resource-not-found.error';
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Either, right, left } from '@/core/either';
 
 interface FavoriteImageUseCaseRequest {
@@ -13,45 +14,29 @@ type FavoriteImageUseCaseResponse = Either<ResourceNotFoundError, { isFavorite: 
 
 @Injectable()
 export class FavoriteImageUseCase {
-  constructor(private userRepository: UserRepository, private imageRepository: ImageRepository) {}
+  constructor(private favoriteRepository: FavoriteRepository) {}
 
   async execute({
     imageId,
     userId,
   }: FavoriteImageUseCaseRequest): Promise<FavoriteImageUseCaseResponse> {
-    const user = await this.userRepository.findById(userId);
-
-    if (!user) {
-      return left(new ResourceNotFoundError());
-    }
-
-    const image = await this.imageRepository.findById(imageId);
-
-    if (!image) {
-      return left(new ResourceNotFoundError());
-    }
-
-    const favoritesImagesId = user.favorites;
-
-    const isImageAlreadyFavorite = favoritesImagesId.find(
-      (favoriteImage) => favoriteImage === image.id.toValue(),
+    const isImageAlreadyFavorite = await this.favoriteRepository.findByUserIdAndImageId(
+      userId,
+      imageId,
     );
 
     if (isImageAlreadyFavorite) {
-      user.favorites = favoritesImagesId.filter(
-        (favoriteImage) => favoriteImage !== image.id.toValue(),
-      );
-      image.users = image.users.filter((userId) => userId !== user.id.toValue());
-
-      await this.userRepository.removeConnectionFromFavoriteImage(userId, imageId);
-    } else {
-      image.users = [...image.users, user.id.toValue()];
-      user.favorites = [...favoritesImagesId, image.id.toValue()];
+      await this.favoriteRepository.delete(isImageAlreadyFavorite);
+      return right({ isFavorite: false });
     }
 
-    await this.userRepository.save(user);
-    await this.imageRepository.save(image);
+    const favorite = Favorite.create({
+      imageId: new UniqueEntityID(imageId),
+      userId: new UniqueEntityID(userId),
+    });
 
-    return right({ isFavorite: !isImageAlreadyFavorite });
+    await this.favoriteRepository.create(favorite);
+
+    return right({ isFavorite: true });
   }
 }

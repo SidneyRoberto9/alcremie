@@ -1,4 +1,5 @@
 import { InMemoryRequestRepository } from '@/test/repositories/in-memory-request.repository';
+import { makeRequest } from '@/test/factory/make-request';
 import { RegisterRequestUseCase } from '@/domain/alcremie/application/use-cases/cases/register-request/register-request';
 
 let inMemoryRequestRepository: InMemoryRequestRepository;
@@ -11,9 +12,11 @@ describe('Register Request', () => {
   });
 
   it('should be able to register a new request', async () => {
+    const request = makeRequest();
     const result = await sut.execute({
-      requestType: 'GET',
-      route: '/sessions',
+      ip: request.ip,
+      requestType: request.requestType.value,
+      route: request.route,
     });
 
     expect(result.isRight()).toBe(true);

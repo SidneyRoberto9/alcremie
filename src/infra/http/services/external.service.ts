@@ -52,6 +52,34 @@ export class ExternalService {
     });
   }
 
+  async getAllTagNamesFromBuffer(
+    buffer: Buffer,
+    name: string,
+    mimetype: string,
+  ): Promise<string[]> {
+    const AI_HF = this.envService.get('HUGGING_FACE_API');
+
+    const formData = new Fm();
+    formData.append('picture', buffer, {
+      contentType: mimetype,
+      filename: name,
+    });
+
+    try {
+      const { data } = await axios.post(AI_HF, formData, {
+        headers: formData.getHeaders(),
+      });
+
+      const formattedTagsName: string[] = data[0]
+        .map((tagName: string) => tagName.toLowerCase().trim())
+        .filter((tagName: string) => !validateTagNameString(tagName));
+
+      return formattedTagsName;
+    } catch (error) {
+      throw new BadRequestException('Invalid External Api.');
+    }
+  }
+
   async getAllTagNamesFromImage(file: MulterFile): Promise<string[]> {
     const AI_HF = this.envService.get('HUGGING_FACE_API');
 

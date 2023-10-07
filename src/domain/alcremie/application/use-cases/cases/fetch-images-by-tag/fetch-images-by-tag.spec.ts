@@ -3,15 +3,18 @@ import { InMemoryImageRepository } from '@/test/repositories/in-memory-image.rep
 import { makeTag } from '@/test/factory/make-tag';
 import { makeImage } from '@/test/factory/make-image';
 import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
+import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/cases/create-image/create-image';
 
 let inMemoryTagRepository: InMemoryTagRepository;
 let inMemoryImageRepository: InMemoryImageRepository;
+let createImage: CreateImageUseCase;
 let sut: FetchImagesByTagUseCase;
 
 describe('Fetch Images By Tag', () => {
   beforeEach(() => {
     inMemoryTagRepository = new InMemoryTagRepository();
     inMemoryImageRepository = new InMemoryImageRepository();
+    createImage = new CreateImageUseCase(inMemoryImageRepository, inMemoryTagRepository);
     sut = new FetchImagesByTagUseCase(inMemoryImageRepository);
   });
 
@@ -20,15 +23,25 @@ describe('Fetch Images By Tag', () => {
     inMemoryTagRepository.items.push(newTag);
 
     for (let index = 0; index < 10; index++) {
-      const newImage = makeImage({
-        tags: [newTag],
+      const newImage = makeImage();
+      await createImage.execute({
+        assetId: newImage.assetId,
+        isNsfw: newImage.isNsfw,
+        size: newImage.size,
+        url: newImage.url,
+        tagIds: [newTag.id.toValue()],
       });
-      inMemoryImageRepository.items.push(newImage);
     }
 
     for (let index = 0; index < 15; index++) {
       const newImage = makeImage();
-      inMemoryImageRepository.items.push(newImage);
+      await createImage.execute({
+        assetId: newImage.assetId,
+        isNsfw: newImage.isNsfw,
+        size: newImage.size,
+        url: newImage.url,
+        tagIds: [],
+      });
     }
 
     const result = await sut.execute({

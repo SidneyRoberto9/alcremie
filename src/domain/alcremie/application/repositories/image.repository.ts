@@ -7,8 +7,9 @@ export abstract class ImageRepository {
   abstract findManyByTagIn(tagId: string, params: PaginationParams): Promise<Image[]>;
   abstract findMany(params: PaginationParams): Promise<Image[]>;
   abstract getRandom(): Promise<Image | null>;
-  abstract create(image: Image): Promise<void>;
   abstract delete(image: Image): Promise<void>;
   abstract save(image: Image): Promise<void>;
   abstract count(): Promise<number>;
+
+  abstract create(image: Image, tagIds: string[]): Promise<void>;
 }

@@ -42,8 +42,10 @@ export class PrismaImageRepository implements ImageRepository {
       take: size,
       skip: (page - 1) * size,
       where: {
-        tagsIDs: {
-          has: tagId,
+        tags: {
+          some: {
+            id: tagId,
+          },
         },
       },
     });
@@ -81,55 +83,12 @@ export class PrismaImageRepository implements ImageRepository {
     return PrismaImageMapper.toDomain(randomImage);
   }
 
-  async create(image: Image): Promise<void> {
-    const data = PrismaImageMapper.toPersistence(image);
-
-    await this.prisma.image.create({
-      data,
-    });
-  }
-
   async delete(image: Image): Promise<void> {
-    const tagsIdInImage = image.tags.map((tag) => tag);
-
-    const tags = await this.prisma.tag.findMany({
+    await this.prisma.image.delete({
       where: {
-        id: {
-          in: tagsIdInImage,
-        },
+        id: image.id.toValue(),
       },
     });
-
-    await this.prisma.$transaction([
-      this.prisma.image.update({
-        where: {
-          id: image.id.toValue(),
-        },
-        data: {
-          tags: {
-            disconnect: tagsIdInImage.map((tagId) => ({ id: tagId })),
-          },
-        },
-      }),
-      this.prisma.image.delete({
-        where: {
-          id: image.id.toValue(),
-        },
-      }),
-    ]);
-
-    for (let tag of tags) {
-      await this.prisma.tag.update({
-        where: {
-          id: tag.id,
-        },
-        data: {
-          imageIDs: {
-            set: tag.imageIDs.filter((imageId) => imageId !== image.id.toValue()),
-          },
-        },
-      });
-    }
   }
 
   async save(image: Image): Promise<void> {
@@ -145,5 +104,18 @@ export class PrismaImageRepository implements ImageRepository {
 
   async count(): Promise<number> {
     return await this.prisma.image.count();
+  }
+
+  async create(image: Image, tagIds: string[]): Promise<void> {
+    const data = PrismaImageMapper.toPersistence(image);
+
+    await this.prisma.image.create({
+      data: {
+        ...data,
+        tags: {
+          connect: tagIds.map((tagId) => ({ id: tagId })),
+        },
+      },
+    });
   }
 }
