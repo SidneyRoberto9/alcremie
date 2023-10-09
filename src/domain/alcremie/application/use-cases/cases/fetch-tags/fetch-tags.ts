@@ -1,10 +1,12 @@
+import { s } from 'vitest/dist/reporters-cb94c88b';
+
 import { Injectable } from '@nestjs/common';
 import { Tag } from '@/domain/alcremie/enterprise/entities/tag';
 import { TagRepository } from '@/domain/alcremie/application/repositories/tag.repository';
 import { Either, right } from '@/core/either';
 
 interface FetchTagsUseCaseRequest {
-  page: number;
+  q: string;
   size?: number;
 }
 
@@ -14,11 +16,9 @@ type FetchTagsUseCaseResponse = Either<null, { tags: Tag[] }>;
 export class FetchTagsUseCase {
   constructor(private tagRepository: TagRepository) {}
 
-  async execute({ page, size = 25 }: FetchTagsUseCaseRequest): Promise<FetchTagsUseCaseResponse> {
-    const tags = await this.tagRepository.findMany({
-      page,
-      size,
-    });
+  async execute({ q, size = 25 }: FetchTagsUseCaseRequest): Promise<FetchTagsUseCaseResponse> {
+    const text = q.trim().toLowerCase().replaceAll(' ', '_');
+    const tags = await this.tagRepository.findManyByName(text, size);
 
     return right({ tags });
   }

@@ -5,6 +5,7 @@ export abstract class TagRepository {
   abstract findById(id: string): Promise<Tag | null>;
   abstract findBySlug(slug: string): Promise<Tag | null>;
   abstract findByName(name: string): Promise<Tag | null>;
+  abstract findManyByName(name: string, limit: number): Promise<Tag[]>;
   abstract findMany(params: PaginationParams): Promise<Tag[]>;
   abstract findManyByIds(ids: string[]): Promise<Tag[]>;
   abstract create(tag: Tag): Promise<void>;

@@ -60,6 +60,19 @@ export class PrismaTagRepository implements TagRepository {
     return tags.map((tag) => PrismaTagMapper.toDomain(tag));
   }
 
+  async findManyByName(name: string, limit: number): Promise<Tag[]> {
+    const tags = await this.prisma.tag.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+      take: limit,
+    });
+
+    return tags.map((tag) => PrismaTagMapper.toDomain(tag));
+  }
+
   async findManyByIds(ids: string[]): Promise<Tag[]> {
     const tags = await this.prisma.tag.findMany({
       where: {

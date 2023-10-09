@@ -50,6 +50,12 @@ export class InMemoryTagRepository implements TagRepository {
     return tag;
   }
 
+  async findManyByName(name: string, limit: number): Promise<Tag[]> {
+    const tag = this.items.filter((tag) => tag.name === name).slice(0, limit);
+
+    return tag;
+  }
+
   async delete(tag: Tag): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === tag.id);
     this.items.splice(itemIndex, 1);
