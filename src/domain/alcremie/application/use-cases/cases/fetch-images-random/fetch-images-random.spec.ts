@@ -1,14 +1,14 @@
 import { InMemoryImageRepository } from '@/test/repositories/in-memory-image.repository';
 import { makeImage } from '@/test/factory/make-image';
-import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
+import { FetchImagesRandomUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-random/fetch-images-random';
 
 let inMemoryImageRepository: InMemoryImageRepository;
-let sut: FetchImagesUseCase;
+let sut: FetchImagesRandomUseCase;
 
-describe('Fetch Images', () => {
+describe('Fetch Images Random', () => {
   beforeEach(() => {
     inMemoryImageRepository = new InMemoryImageRepository();
-    sut = new FetchImagesUseCase(inMemoryImageRepository);
+    sut = new FetchImagesRandomUseCase(inMemoryImageRepository);
   });
 
   it('should be able to fetch images ', async () => {
@@ -17,12 +17,10 @@ describe('Fetch Images', () => {
       inMemoryImageRepository.items.push(newImage);
     }
 
-    const result = await sut.execute({
-      page: 1,
-    });
+    const result = await sut.execute({});
 
     expect(result.isRight()).toBe(true);
     expect(inMemoryImageRepository.items).toHaveLength(10);
-    expect(result.value?.data).toHaveLength(10);
+    expect(result.value?.images).toHaveLength(10);
   });
 });

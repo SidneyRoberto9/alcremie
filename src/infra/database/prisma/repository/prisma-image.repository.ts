@@ -48,15 +48,24 @@ export class PrismaImageRepository implements ImageRepository {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     return images.map((image) => PrismaImageMapper.toDomain(image));
   }
 
-  async findMany({ page, size }: PaginationParams): Promise<Image[]> {
+  async findMany({ page, size }: PaginationParams, nsfw: boolean): Promise<Image[]> {
     const images = await this.prisma.image.findMany({
+      where: {
+        isNsfw: nsfw,
+      },
       take: size,
       skip: (page - 1) * size,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     return images.map((image) => PrismaImageMapper.toDomain(image));
@@ -64,6 +73,9 @@ export class PrismaImageRepository implements ImageRepository {
 
   async getRandom(): Promise<Image | null> {
     const allImagesIDs = await this.prisma.image.findMany({
+      where: {
+        isNsfw: false,
+      },
       select: { id: true },
     });
 
@@ -83,11 +95,49 @@ export class PrismaImageRepository implements ImageRepository {
     return PrismaImageMapper.toDomain(randomImage);
   }
 
+  async findManyRandom(size: number): Promise<Image[]> {
+    const allImagesIDs = await this.prisma.image.findMany({
+      select: { id: true },
+    });
+
+    const imageIdArray = allImagesIDs.map((element) => element.id);
+    const randomIdsFromArray: string[] = [];
+
+    for (let i = 0; i < size; i++) {
+      randomIdsFromArray.push(imageIdArray[Math.floor(Math.random() * imageIdArray.length)]);
+    }
+
+    const randomImages = await this.prisma.image.findMany({
+      where: {
+        id: {
+          in: randomIdsFromArray,
+        },
+      },
+    });
+
+    return randomImages.map((image) => PrismaImageMapper.toDomain(image));
+  }
+
   async delete(image: Image): Promise<void> {
     await this.prisma.image.delete({
       where: {
         id: image.id.toValue(),
       },
+    });
+
+    image.tags.forEach(async (tag) => {
+      await this.prisma.tag.update({
+        where: {
+          id: tag.id.toValue(),
+        },
+        data: {
+          images: {
+            disconnect: {
+              id: image.id.toValue(),
+            },
+          },
+        },
+      });
     });
   }
 
@@ -104,6 +154,26 @@ export class PrismaImageRepository implements ImageRepository {
 
   async count(): Promise<number> {
     return await this.prisma.image.count();
+  }
+
+  async countNsfw(nsfw: boolean): Promise<number> {
+    return await this.prisma.image.count({
+      where: {
+        isNsfw: nsfw,
+      },
+    });
+  }
+
+  async countWithTagIn(tagId: string): Promise<number> {
+    return await this.prisma.image.count({
+      where: {
+        tags: {
+          some: {
+            id: tagId,
+          },
+        },
+      },
+    });
   }
 
   async create(image: Image, tagIds: string[]): Promise<void> {

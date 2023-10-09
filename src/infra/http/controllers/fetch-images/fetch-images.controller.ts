@@ -11,7 +11,8 @@ const fetchImageParams = z.object({
 });
 
 const fetchImagesQuery = z.object({
-  limit: z.number().default(25),
+  nsfw: z.string(),
+  limit: z.string().default('25'),
   q: z.string().default(''),
 });
 
@@ -35,21 +36,27 @@ export class FetchImagesController {
     if (query.q === '') {
       const result = await this.fetchImagesUseCase.execute({
         page: params.page,
-        size: query.limit,
+        size: Number(query.limit),
+        nsfw: query.nsfw == 'false' ? false : true,
       });
 
       if (result.isRight()) {
-        const images = result.value?.images ?? [];
+        const images = result.value?.data ?? [];
 
-        return {
-          images: images.map(ImagePresenter.toHTTP),
+        const content = {
+          page: result.value?.page ?? 1,
+          totalPage: result.value?.totalPage ?? 1,
+          hasNext: result.value?.hasNext ?? false,
+          data: images.map(ImagePresenter.toHTTP),
         };
+
+        return { content };
       }
     }
 
     const result = await this.fetchImagesByTagUseCase.execute({
       page: params.page,
-      size: query.limit,
+      size: Number(query.limit),
       tagId: query.q,
     });
 
@@ -57,10 +64,15 @@ export class FetchImagesController {
       throw new BadRequestException();
     }
 
-    const images = result.value.images;
+    const images = result.value?.data ?? [];
 
-    return {
-      images: images.map(ImagePresenter.toHTTPWithoutTags),
+    const content = {
+      page: result.value?.page ?? 1,
+      totalPage: result.value?.totalPage ?? 1,
+      hasNext: result.value?.hasNext ?? false,
+      data: images.map(ImagePresenter.toHTTP),
     };
+
+    return { content };
   }
 }

@@ -31,10 +31,12 @@ export class RegisterRequestUseCase {
       return left(new NotAllowedError());
     }
 
+    const routeFormatted = route.split('?')[0];
+
     const request = Request.create({
       ip,
       requestType: RequestType.create(requestType),
-      route,
+      route: routeFormatted,
     });
 
     await this.requestRepository.create(request);

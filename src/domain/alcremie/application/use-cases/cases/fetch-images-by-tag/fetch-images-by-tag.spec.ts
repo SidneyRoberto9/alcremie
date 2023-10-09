@@ -52,6 +52,6 @@ describe('Fetch Images By Tag', () => {
 
     expect(result.isRight()).toBe(true);
     expect(inMemoryImageRepository.items).toHaveLength(25);
-    expect(result.value?.images).toHaveLength(10);
+    expect(result.value?.data).toHaveLength(10);
   });
 });

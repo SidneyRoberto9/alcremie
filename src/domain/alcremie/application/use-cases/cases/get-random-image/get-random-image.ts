@@ -13,7 +13,7 @@ export class GetRandomImageUseCase {
   constructor(private imageRepository: ImageRepository) {}
 
   async execute({}: GetRandomImageUseCaseRequest): Promise<GetRandomImageUseCaseResponse> {
-    const image = await this.imageRepository.getRandom();
+    let image = await this.imageRepository.getRandom();
 
     if (!image) {
       return left(new ResourceNotFoundError());

@@ -20,9 +20,8 @@ export class PrismaRequestMapper {
 
   static toPersistence(request: Request): Prisma.RequestUncheckedCreateInput {
     return {
-      id: request.id.toValue(),
       ip: request.ip,
-      requestType: request.requestType.value as RequestTypeValue,
+      requestType: request.requestType.value,
       route: request.route,
       createdAt: request.createdAt,
     };

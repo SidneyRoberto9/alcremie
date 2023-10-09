@@ -9,6 +9,7 @@ import { GetStatusController } from '@/infra/http/controllers/get-status/get-sta
 import { GetRandomImageController } from '@/infra/http/controllers/get-random-image/get-random-image.controller';
 import { FetchTagController } from '@/infra/http/controllers/fetch-tag/fetch-tag.controller';
 import { FetchImagesController } from '@/infra/http/controllers/fetch-images/fetch-images.controller';
+import { FetchImagesRandomController } from '@/infra/http/controllers/fetch-images-random/fetch-images-random.controller';
 import { FavoriteImageController } from '@/infra/http/controllers/favorite-image/favorite-image.controller';
 import { DeleteImageController } from '@/infra/http/controllers/delete-image/delete-image.controller';
 import { AuthController } from '@/infra/http/controllers/auth/auth.controller';
@@ -22,6 +23,7 @@ import { GetStatisticsUseCase } from '@/domain/alcremie/application/use-cases/ca
 import { GetRandomImageUseCase } from '@/domain/alcremie/application/use-cases/cases/get-random-image/get-random-image';
 import { FetchTagsUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-tags/fetch-tags';
 import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
+import { FetchImagesRandomUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-random/fetch-images-random';
 import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
 import { FavoriteImageUseCase } from '@/domain/alcremie/application/use-cases/cases/favorite-image/favorite-image';
 import { DeleteImageUseCase } from '@/domain/alcremie/application/use-cases/cases/delete-image/delete-image';
@@ -40,7 +42,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
       },
       {
         ttl: 1000,
-        limit: 3,
+        limit: 10,
       },
     ]),
   ],
@@ -53,6 +55,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     FetchImagesController,
     FavoriteImageController,
     GetRandomImageController,
+    FetchImagesRandomController,
   ],
   providers: [
     // Services
@@ -72,6 +75,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     GetRandomImageUseCase,
     RegisterRequestUseCase,
     FetchImagesByTagUseCase,
+    FetchImagesRandomUseCase,
 
     //interceptors
     RequestInterceptor,

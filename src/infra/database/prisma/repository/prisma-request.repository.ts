@@ -26,7 +26,12 @@ export class PrismaRequestRepository implements RequestRepository {
     const data = PrismaRequestMapper.toPersistence(request);
 
     await this.prisma.request.create({
-      data,
+      data: {
+        requestType: data.requestType,
+        route: data.route,
+        ip: data.ip,
+        createdAt: data.createdAt,
+      },
     });
   }
 

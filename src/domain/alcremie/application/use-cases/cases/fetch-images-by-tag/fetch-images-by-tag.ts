@@ -9,7 +9,14 @@ interface FetchImagesByTagUseCaseRequest {
   size?: number;
 }
 
-type FetchImagesByTagUseCaseResponse = Either<null, { images: Image[] }>;
+interface ResponseData {
+  page: number;
+  totalPage: number;
+  hasNext: boolean;
+  data: Image[];
+}
+
+type FetchImagesByTagUseCaseResponse = Either<null, ResponseData>;
 
 @Injectable()
 export class FetchImagesByTagUseCase {
@@ -20,11 +27,20 @@ export class FetchImagesByTagUseCase {
     page,
     size = 25,
   }: FetchImagesByTagUseCaseRequest): Promise<FetchImagesByTagUseCaseResponse> {
+    const imageSize = await this.imageRepository.countWithTagIn(tagId);
+    const totalPage = Math.ceil(imageSize / size);
     const images = await this.imageRepository.findManyByTagIn(tagId, {
       page,
       size,
     });
 
-    return right({ images });
+    const data: ResponseData = {
+      page,
+      totalPage,
+      hasNext: page < totalPage,
+      data: images,
+    };
+
+    return right(data);
   }
 }

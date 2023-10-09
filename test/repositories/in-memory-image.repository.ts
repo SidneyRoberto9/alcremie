@@ -42,13 +42,26 @@ export class InMemoryImageRepository implements ImageRepository {
     return this.items[Math.floor(Math.random() * this.items.length)];
   }
 
+  async findManyRandom(size: number): Promise<Image[]> {
+    const images: Image[] = [];
+
+    Array.from({ length: size }, (_, i) => i + 1).forEach((i) => {
+      images.push(this.items[Math.floor(Math.random() * this.items.length)]);
+    });
+
+    return images;
+  }
+
   async save(image: Image): Promise<void> {
     const itemIndex = this.items.findIndex((item) => item.id === image.id);
     this.items[itemIndex] = image;
   }
 
-  async findMany({ page, size }: PaginationParams): Promise<Image[]> {
-    const image = this.items.sort().slice((page - 1) * size, page * size);
+  async findMany({ page, size }: PaginationParams, nsfw: boolean): Promise<Image[]> {
+    const image = this.items
+      .sort()
+      .filter((item) => item.isNsfw == nsfw)
+      .slice((page - 1) * size, page * size);
 
     return image;
   }
@@ -60,5 +73,14 @@ export class InMemoryImageRepository implements ImageRepository {
 
   async count(): Promise<number> {
     return this.items.length;
+  }
+
+  async countNsfw(nsfw: boolean): Promise<number> {
+    return this.items.filter((item) => item.isNsfw == nsfw).length;
+  }
+
+  async countWithTagIn(tagId: string): Promise<number> {
+    return this.items.sort().filter((image) => image.tags.some((tag) => tag.id.toValue() === tagId))
+      .length;
   }
 }
