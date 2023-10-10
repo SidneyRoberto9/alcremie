@@ -14,11 +14,10 @@ export interface ImageProps {
 }
 
 export class Image extends Entity<ImageProps> {
-  static create(props: Optional<ImageProps, 'createdAt' | 'tags'>, id?: UniqueEntityID): Image {
+  static create(props: Optional<ImageProps, 'createdAt'>, id?: UniqueEntityID): Image {
     const image = new Image(
       {
         ...props,
-        tags: props.tags ?? [],
         createdAt: props.createdAt ?? new Date(),
       },
       id,

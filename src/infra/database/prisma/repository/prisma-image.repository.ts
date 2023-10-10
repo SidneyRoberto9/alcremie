@@ -14,19 +14,25 @@ export class PrismaImageRepository implements ImageRepository {
       where: {
         id,
       },
+      include: {
+        tags: true,
+      },
     });
 
     if (!image) {
       return null;
     }
 
-    return PrismaImageMapper.toDomain(image);
+    return PrismaImageMapper.toDomainWithTag(image);
   }
 
   async findByAssetId(id: string): Promise<Image | null> {
     const image = await this.prisma.image.findUnique({
       where: {
         assetId: id,
+      },
+      include: {
+        tags: true,
       },
     });
 
@@ -51,6 +57,9 @@ export class PrismaImageRepository implements ImageRepository {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        tags: true,
+      },
     });
 
     return images.map((image) => PrismaImageMapper.toDomain(image));
@@ -65,6 +74,9 @@ export class PrismaImageRepository implements ImageRepository {
       skip: (page - 1) * size,
       orderBy: {
         createdAt: 'desc',
+      },
+      include: {
+        tags: true,
       },
     });
 
@@ -85,6 +97,9 @@ export class PrismaImageRepository implements ImageRepository {
     const randomImage = await this.prisma.image.findFirst({
       where: {
         id: randomIdFromArray,
+      },
+      include: {
+        tags: true,
       },
     });
 
@@ -112,6 +127,9 @@ export class PrismaImageRepository implements ImageRepository {
         id: {
           in: randomIdsFromArray,
         },
+      },
+      include: {
+        tags: true,
       },
     });
 

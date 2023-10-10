@@ -7,6 +7,7 @@ import { RequestInterceptor } from '@/infra/http/interceptors/request.intercepto
 import { UploadController } from '@/infra/http/controllers/upload/upload.controller';
 import { GetStatusController } from '@/infra/http/controllers/get-status/get-status.controller';
 import { GetRandomImageController } from '@/infra/http/controllers/get-random-image/get-random-image.controller';
+import { GetImageController } from '@/infra/http/controllers/get-image/get-image.controller';
 import { FetchTagController } from '@/infra/http/controllers/fetch-tag/fetch-tag.controller';
 import { FetchImagesController } from '@/infra/http/controllers/fetch-images/fetch-images.controller';
 import { FetchImagesRandomController } from '@/infra/http/controllers/fetch-images-random/fetch-images-random.controller';
@@ -21,6 +22,7 @@ import { AuthModule } from '@/infra/auth/auth.module';
 import { RegisterRequestUseCase } from '@/domain/alcremie/application/use-cases/cases/register-request/register-request';
 import { GetStatisticsUseCase } from '@/domain/alcremie/application/use-cases/cases/get-statistics/get-statistics';
 import { GetRandomImageUseCase } from '@/domain/alcremie/application/use-cases/cases/get-random-image/get-random-image';
+import { GetImageByIdUseCase } from '@/domain/alcremie/application/use-cases/cases/get-image-by-id/get-image-by-id';
 import { FetchTagsUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-tags/fetch-tags';
 import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images/fetch-images';
 import { FetchImagesRandomUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-random/fetch-images-random';
@@ -49,6 +51,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
   controllers: [
     AuthController,
     UploadController,
+    GetImageController,
     FetchTagController,
     GetStatusController,
     DeleteImageController,
@@ -70,6 +73,7 @@ import { CreateImageUseCase } from '@/domain/alcremie/application/use-cases/case
     CreateImageUseCase,
     DeleteImageUseCase,
     FetchImagesUseCase,
+    GetImageByIdUseCase,
     FavoriteImageUseCase,
     GetStatisticsUseCase,
     GetRandomImageUseCase,

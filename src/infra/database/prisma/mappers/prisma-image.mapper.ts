@@ -1,9 +1,23 @@
 import { Prisma, Image as PrismaImage } from '@prisma/client';
-import { Tag } from '@/domain/alcremie/enterprise/entities/tag';
 import { Image } from '@/domain/alcremie/enterprise/entities/image';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 export class PrismaImageMapper {
+  static toDomainWithTag(raw: any): Image {
+    return Image.create(
+      {
+        assetId: raw.assetId,
+        isNsfw: raw.isNsfw,
+        size: raw.size,
+        url: raw.url,
+        createdAt: raw.createdAt,
+        updatedAt: raw.updatedAt,
+        tags: raw.tags,
+      },
+      new UniqueEntityID(raw.id),
+    );
+  }
+
   static toDomain(raw: PrismaImage): Image {
     return Image.create(
       {
@@ -13,6 +27,7 @@ export class PrismaImageMapper {
         url: raw.url,
         createdAt: raw.createdAt,
         updatedAt: raw.updatedAt,
+        tags: [],
       },
       new UniqueEntityID(raw.id),
     );
