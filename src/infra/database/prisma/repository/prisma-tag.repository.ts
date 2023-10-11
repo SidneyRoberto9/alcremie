@@ -70,7 +70,7 @@ export class PrismaTagRepository implements TagRepository {
       take: limit,
     });
 
-    return tags.map((tag) => PrismaTagMapper.toDomain(tag));
+    return tags.map((tag) => PrismaTagMapper.toDomainWithTags(tag));
   }
 
   async findManyByIds(ids: string[]): Promise<Tag[]> {

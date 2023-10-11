@@ -35,4 +35,12 @@ export class Tag extends Entity<TagProps> {
   set name(value: string) {
     this.props.name = value;
   }
+
+  get images() {
+    return this.props.images;
+  }
+
+  set images(value: Image[]) {
+    this.props.images = value;
+  }
 }

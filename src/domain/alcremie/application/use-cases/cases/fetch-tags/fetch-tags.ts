@@ -16,7 +16,7 @@ type FetchTagsUseCaseResponse = Either<null, { tags: Tag[] }>;
 export class FetchTagsUseCase {
   constructor(private tagRepository: TagRepository) {}
 
-  async execute({ q, size = 25 }: FetchTagsUseCaseRequest): Promise<FetchTagsUseCaseResponse> {
+  async execute({ q, size = 30 }: FetchTagsUseCaseRequest): Promise<FetchTagsUseCaseResponse> {
     const text = q.trim().toLowerCase().replaceAll(' ', '_');
     const tags = await this.tagRepository.findManyByName(text, size);
 

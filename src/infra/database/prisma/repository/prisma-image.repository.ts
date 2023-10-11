@@ -43,7 +43,11 @@ export class PrismaImageRepository implements ImageRepository {
     return PrismaImageMapper.toDomain(image);
   }
 
-  async findManyByTagIn(tagId: string, { page, size }: PaginationParams): Promise<Image[]> {
+  async findManyByTagIn(
+    tagId: string,
+    nsfw: boolean,
+    { page, size }: PaginationParams,
+  ): Promise<Image[]> {
     const images = await this.prisma.image.findMany({
       take: size,
       skip: (page - 1) * size,
@@ -53,6 +57,7 @@ export class PrismaImageRepository implements ImageRepository {
             id: tagId,
           },
         },
+        isNsfw: nsfw,
       },
       orderBy: {
         createdAt: 'desc',
@@ -83,13 +88,28 @@ export class PrismaImageRepository implements ImageRepository {
     return images.map((image) => PrismaImageMapper.toDomain(image));
   }
 
-  async getRandom(): Promise<Image | null> {
-    const allImagesIDs = await this.prisma.image.findMany({
-      where: {
-        isNsfw: false,
-      },
-      select: { id: true },
-    });
+  async getRandom(tagId: string): Promise<Image | null> {
+    let allImagesIDs: { id: string }[] = [];
+
+    if (tagId === '') {
+      allImagesIDs = await this.prisma.image.findMany({
+        where: {
+          isNsfw: false,
+        },
+        select: { id: true },
+      });
+    } else {
+      allImagesIDs = await this.prisma.image.findMany({
+        where: {
+          tags: {
+            some: {
+              id: tagId,
+            },
+          },
+        },
+        select: { id: true },
+      });
+    }
 
     const imageIdArray = allImagesIDs.map((element) => element.id);
     const randomIdFromArray = imageIdArray[Math.floor(Math.random() * imageIdArray.length)];
@@ -182,7 +202,7 @@ export class PrismaImageRepository implements ImageRepository {
     });
   }
 
-  async countWithTagIn(tagId: string): Promise<number> {
+  async countWithTagIn(tagId: string, nsfw: boolean): Promise<number> {
     return await this.prisma.image.count({
       where: {
         tags: {
@@ -190,6 +210,7 @@ export class PrismaImageRepository implements ImageRepository {
             id: tagId,
           },
         },
+        isNsfw: nsfw,
       },
     });
   }

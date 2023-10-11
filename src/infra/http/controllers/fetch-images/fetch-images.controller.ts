@@ -7,11 +7,11 @@ import { FetchImagesUseCase } from '@/domain/alcremie/application/use-cases/case
 import { FetchImagesByTagUseCase } from '@/domain/alcremie/application/use-cases/cases/fetch-images-by-tag/fetch-images-by-tag';
 
 const fetchImageParams = z.object({
-  page: z.number().min(1),
+  page: z.number().min(1).default(1),
 });
 
 const fetchImagesQuery = z.object({
-  nsfw: z.string(),
+  nsfw: z.string().default('false'),
   limit: z.string().default('25'),
   q: z.string().default(''),
 });
@@ -33,11 +33,13 @@ export class FetchImagesController {
     @Param() params: FetchImageParams,
     @Query(queryValidationPipe) query: FetchImagesQuery,
   ) {
+    const isNsfw = query.nsfw == 'false' ? false : true;
+
     if (query.q === '') {
       const result = await this.fetchImagesUseCase.execute({
         page: params.page,
         size: Number(query.limit),
-        nsfw: query.nsfw == 'false' ? false : true,
+        nsfw: isNsfw,
       });
 
       if (result.isRight()) {
@@ -57,6 +59,7 @@ export class FetchImagesController {
     const result = await this.fetchImagesByTagUseCase.execute({
       page: params.page,
       size: Number(query.limit),
+      nsfw: isNsfw,
       tagId: query.q,
     });
 

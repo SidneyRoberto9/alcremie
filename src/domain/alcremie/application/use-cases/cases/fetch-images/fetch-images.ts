@@ -24,7 +24,7 @@ export class FetchImagesUseCase {
 
   async execute({
     page,
-    size = 25,
+    size = 30,
     nsfw = false,
   }: FetchImagesUseCaseRequest): Promise<FetchImagesUseCaseResponse> {
     const imageSize = await this.imageRepository.countNsfw(nsfw);

@@ -38,8 +38,16 @@ export class InMemoryImageRepository implements ImageRepository {
     this.items.push(image);
   }
 
-  async getRandom(): Promise<Image | null> {
-    return this.items[Math.floor(Math.random() * this.items.length)];
+  async getRandom(tagId: string): Promise<Image | null> {
+    if (tagId === '') {
+      return this.items[Math.floor(Math.random() * this.items.length)];
+    }
+
+    const images = this.items.filter((image) =>
+      image.tags.some((tag) => tag.id.toValue() === tagId),
+    );
+
+    return images[Math.floor(Math.random() * this.items.length)];
   }
 
   async findManyRandom(size: number): Promise<Image[]> {

@@ -4,6 +4,17 @@ import { Tag } from '@/domain/alcremie/enterprise/entities/tag';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 export class PrismaTagMapper {
+  static toDomainWithTags(raw: any): Tag {
+    return Tag.create(
+      {
+        name: raw.name,
+        slug: Slug.createFromText(raw.name),
+        images: raw.images,
+      },
+      new UniqueEntityID(raw.id),
+    );
+  }
+
   static toDomain(raw: PrismaTag): Tag {
     return Tag.create(
       {

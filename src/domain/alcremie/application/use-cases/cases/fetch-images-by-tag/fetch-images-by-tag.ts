@@ -4,9 +4,10 @@ import { ImageRepository } from '@/domain/alcremie/application/repositories/imag
 import { Either, right } from '@/core/either';
 
 interface FetchImagesByTagUseCaseRequest {
-  tagId: string;
   page: number;
   size?: number;
+  tagId: string;
+  nsfw?: boolean;
 }
 
 interface ResponseData {
@@ -25,11 +26,12 @@ export class FetchImagesByTagUseCase {
   async execute({
     tagId,
     page,
-    size = 25,
+    size = 30,
+    nsfw = false,
   }: FetchImagesByTagUseCaseRequest): Promise<FetchImagesByTagUseCaseResponse> {
-    const imageSize = await this.imageRepository.countWithTagIn(tagId);
+    const imageSize = await this.imageRepository.countWithTagIn(tagId, nsfw);
     const totalPage = Math.ceil(imageSize / size);
-    const images = await this.imageRepository.findManyByTagIn(tagId, {
+    const images = await this.imageRepository.findManyByTagIn(tagId, nsfw, {
       page,
       size,
     });

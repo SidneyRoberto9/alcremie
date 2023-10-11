@@ -4,7 +4,9 @@ import { ImageRepository } from '@/domain/alcremie/application/repositories/imag
 import { ResourceNotFoundError } from '@/core/erros/errors/resource-not-found.error';
 import { Either, right, left } from '@/core/either';
 
-interface GetRandomImageUseCaseRequest {}
+interface GetRandomImageUseCaseRequest {
+  tagId?: string;
+}
 
 type GetRandomImageUseCaseResponse = Either<ResourceNotFoundError, { image: Image }>;
 
@@ -12,8 +14,10 @@ type GetRandomImageUseCaseResponse = Either<ResourceNotFoundError, { image: Imag
 export class GetRandomImageUseCase {
   constructor(private imageRepository: ImageRepository) {}
 
-  async execute({}: GetRandomImageUseCaseRequest): Promise<GetRandomImageUseCaseResponse> {
-    let image = await this.imageRepository.getRandom();
+  async execute({
+    tagId = '',
+  }: GetRandomImageUseCaseRequest): Promise<GetRandomImageUseCaseResponse> {
+    let image = await this.imageRepository.getRandom(tagId);
 
     if (!image) {
       return left(new ResourceNotFoundError());
