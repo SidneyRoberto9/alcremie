@@ -1,14 +1,9 @@
 import { Reflector } from '@nestjs/core';
 import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
-import { PrismaUserRepository } from '@/infra/database/prisma/repository/prisma-user.repository';
-import { UserRepository } from '@/domain/alcremie/application/repositories/user.repository';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-    private readonly userRepository: UserRepository,
-  ) {}
+  constructor(private readonly reflector: Reflector) {}
 
   matchRoles(roles: string[], userRole: string): boolean {
     return roles.some((role) => role === userRole);

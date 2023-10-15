@@ -67,7 +67,7 @@ export class PrismaImageRepository implements ImageRepository {
       },
     });
 
-    return images.map((image) => PrismaImageMapper.toDomain(image));
+    return images.map((image) => PrismaImageMapper.toDomainWithTag(image));
   }
 
   async findMany({ page, size }: PaginationParams, nsfw: boolean): Promise<Image[]> {
@@ -85,7 +85,7 @@ export class PrismaImageRepository implements ImageRepository {
       },
     });
 
-    return images.map((image) => PrismaImageMapper.toDomain(image));
+    return images.map((image) => PrismaImageMapper.toDomainWithTag(image));
   }
 
   async getRandom(tagId: string): Promise<Image | null> {
