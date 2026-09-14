@@ -24,6 +24,12 @@ export default defineConfig({
           name: "node",
           environment: "node",
           include: ["src/db/**/*.test.ts", "src/services/**/*.test.ts", "src/app/api/**/*.test.ts"],
+          // Os arquivos aqui batem no mesmo Postgres de verdade, sem
+          // transação por teste — em paralelo, fixtures de um arquivo (ex.:
+          // linhas rating=general de schema.test.ts) vazam para contagens
+          // sem filtro de outro (ex.: a paginação completa em images.test.ts),
+          // dando falso negativo intermitente. Sequencial custa <1s aqui.
+          fileParallelism: false,
         },
       },
       {
