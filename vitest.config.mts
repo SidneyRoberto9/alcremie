@@ -38,6 +38,7 @@ export default defineConfig({
             "src/db/**/*.test.ts",
             "src/services/**/*.test.ts",
             "src/app/api/**/*.test.ts",
+            "src/app/**/upload/**/*.test.ts",
             "src/middleware.test.ts",
           ],
           // Os arquivos aqui batem no mesmo Postgres de verdade, sem
@@ -61,7 +62,7 @@ export default defineConfig({
             "src/app/**/*.test.{ts,tsx}",
             "src/utils/**/*.test.{ts,tsx}",
           ],
-          exclude: ["src/app/api/**"],
+          exclude: ["src/app/api/**", "src/app/**/upload/**"],
           setupFiles: ["./vitest.setup.ts"],
         },
       },
