@@ -124,6 +124,8 @@ const audit = () => {
     return rect.width > 0 && rect.height > 0 && getComputedStyle(node).visibility !== 'hidden'
   })
 
+  const hasOwnText = (node) => [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent.trim())
+
   for (const node of visible) {
     const rect = node.getBoundingClientRect()
 
@@ -134,9 +136,7 @@ const audit = () => {
       }
     }
 
-    const hasOwnText = [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent.trim())
-
-    if (hasOwnText) {
+    if (hasOwnText(node)) {
       // 12px é o piso para texto de leitura corrida a distância de braço
       // (telas estreitas, ≤480px). Acima disso, rótulos curtos em maiúsculas
       // (labels de seção, chips, status) em telas largas são uma convenção
@@ -166,9 +166,13 @@ const audit = () => {
     }
   }
 
+  // A regra é sobre texto encostado na borda, não sobre contêineres cujos
+  // descendentes têm texto — um rail de ícones ou o wrapper do shell tocando
+  // x=0 é layout de propósito, não um problema de gutter. Por isso usa o
+  // mesmo `hasOwnText` do loop acima, não `node.textContent`.
   const gutter = getComputedStyle(document.body)
   if (Number.parseFloat(gutter.paddingLeft) === 0 && doc.clientWidth <= 480) {
-    const touching = visible.some((node) => node.getBoundingClientRect().left === 0 && node.textContent?.trim())
+    const touching = visible.some((node) => node.getBoundingClientRect().left === 0 && hasOwnText(node))
     if (touching) {
       problems.push({ rule: 'no-side-gutter', detail: 'texto encostado na borda em 390px' })
     }
