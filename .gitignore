@@ -39,6 +39,7 @@ next-env.d.ts
 # house
 models/
 fixtures/seed/
+public/seed/
 tests/visual/score-report/
 .superpowers/
 

@@ -13,6 +13,7 @@
     "test": "vitest run",
     "ui:score": "node tests/visual/score-ui.mjs",
     "ui:score:one": "node tests/visual/score-ui.mjs --only",
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "prepare": "husky"
   },
   "dependencies": {
