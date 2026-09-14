@@ -1,4 +1,4 @@
-import { desc, sql } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 import { db } from "@/db/client"
 import { tags } from "@/db/schema"
 
@@ -21,4 +21,16 @@ export const searchTags = async (term: string, limit = 25) => {
     .where(sql`${tags.name} % ${term}`)
     .orderBy(sql`similarity(${tags.name}, ${term}) DESC`, desc(tags.imageCount))
     .limit(limit)
+}
+
+// Resolve o nome da tag a partir do id da URL (?tag=UUID) para o chip da
+// galeria — sem isso, colar o link numa aba nova mostraria só o UUID cru.
+export const getTagById = async (id: string) => {
+  const [row] = await db
+    .select({ id: tags.id, name: tags.name, slug: tags.slug, imageCount: tags.imageCount })
+    .from(tags)
+    .where(eq(tags.id, id))
+    .limit(1)
+
+  return row ?? null
 }
