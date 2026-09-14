@@ -31,7 +31,6 @@
     "postgres": "^3.4.9",
     "prop-types": "^15.8.1",
     "react": "19.3.0",
-    "react-countup": "^6.4.2",
     "react-dom": "19.3.0",
     "react-layout-masonry": "^1.1.0",
     "react-modern-drawer": "^1.2.2",
