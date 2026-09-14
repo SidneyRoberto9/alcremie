@@ -22,24 +22,12 @@ export default defineConfig({
         },
         test: {
           name: "node",
-          // next-auth/@auth/core são ESM puro sem "exports" no package.json
-          // do Next 16.3.5 instalado aqui; externalizados (padrão do Vitest
-          // para node_modules), o resolver nativo do Node não acha
-          // "next/server" sem a extensão .js e quebra o import. server.deps
-          // .inline força o Vite a transformar esses pacotes, que resolve do
-          // jeito de bundler em vez do ESM estrito do Node.
-          server: {
-            deps: {
-              inline: ["next-auth", "@auth/core"],
-            },
-          },
           environment: "node",
           include: [
             "src/db/**/*.test.ts",
             "src/services/**/*.test.ts",
             "src/app/api/**/*.test.ts",
             "src/app/**/upload/**/*.test.ts",
-            "src/middleware.test.ts",
           ],
           // Os arquivos aqui batem no mesmo Postgres de verdade, sem
           // transação por teste — em paralelo, fixtures de um arquivo (ex.:
