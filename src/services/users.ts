@@ -15,12 +15,9 @@ interface UpsertUserInput {
  */
 export const upsertUserByEmail = async ({ email, name, avatarUrl }: UpsertUserInput) => {
   const normalizedEmail = email.toLowerCase()
+  const matchesEmail = sql`lower(${users.email}) = ${normalizedEmail}`
 
-  const [existing] = await db
-    .select()
-    .from(users)
-    .where(sql`lower(${users.email}) = ${normalizedEmail}`)
-    .limit(1)
+  const [existing] = await db.select().from(users).where(matchesEmail).limit(1)
 
   if (existing) {
     const [updated] = await db
