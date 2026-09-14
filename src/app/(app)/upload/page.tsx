@@ -1,13 +1,26 @@
-import { Box } from "@/components/Box"
-import { FilesView } from "@/components/upload/FilesView"
-import { Send } from "@/components/upload/Send"
-import { UploadArea } from "@/components/upload/UploadArea"
-export default function Page() {
+"use client"
+
+import { Upload } from "lucide-react"
+import { ApiStatus } from "@/components/shell/api-status"
+import { Topbar } from "@/components/shell/topbar"
+import { Dropzone } from "@/components/upload/dropzone"
+import { Queue } from "@/components/upload/queue"
+import { useUploadQueue } from "@/hooks/upload/use-upload-queue"
+
+const Page = () => {
+  const { items, add, remove, send, sending } = useUploadQueue()
+
   return (
-    <Box className="m-auto mt-10 max-w-7xl">
-      <UploadArea />
-      <FilesView />
-      <Send />
-    </Box>
+    <>
+      <Topbar icon={Upload} title="Upload" right={<ApiStatus />} />
+      <div className="grow overflow-hidden p-6">
+        <div className="mx-auto flex max-w-[840px] flex-col gap-[18px]">
+          <Dropzone onFiles={add} />
+          {items.length > 0 ? <Queue items={items} onRemove={remove} onSend={send} sending={sending} /> : null}
+        </div>
+      </div>
+    </>
   )
 }
+
+export default Page
