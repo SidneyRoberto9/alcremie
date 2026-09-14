@@ -178,7 +178,14 @@ const audit = () => {
         problems.push({ rule: 'font-too-small', detail: describe(node), value: size })
       }
 
-      if (node.scrollWidth > node.clientWidth + 1 && getComputedStyle(node).overflow === 'hidden') {
+      // overflow:hidden sozinho pode ser truncamento deliberado (ellipsis ou
+      // clamp de linhas), não um corte acidental — o texto ainda sinaliza
+      // visualmente que continua. Só conta como "clipped" quando não há
+      // nenhuma dessas duas sinalizações.
+      const clipStyle = getComputedStyle(node)
+      const truncatedByDesign =
+        clipStyle.textOverflow === 'ellipsis' || clipStyle.getPropertyValue('-webkit-line-clamp') !== ''
+      if (node.scrollWidth > node.clientWidth + 1 && clipStyle.overflow === 'hidden' && !truncatedByDesign) {
         problems.push({ rule: 'text-clipped', detail: describe(node) })
       }
     }
