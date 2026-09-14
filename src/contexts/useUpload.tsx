@@ -2,7 +2,7 @@
 
 import { createContext, type ReactNode, useContext, useState } from "react"
 
-import { api } from "@/lib/axios"
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
 interface UploadContextProps {
   imagesToUpload: File[]
@@ -52,7 +52,7 @@ export function UploadContextProvider({ children }: UploadContextProviderProps) 
       formData.append("image", image)
     })
 
-    await api.post("/upload", formData)
+    await fetch(`${API_URL}/upload`, { method: "POST", body: formData })
 
     // await toast.promise(), {
     //   pending: {

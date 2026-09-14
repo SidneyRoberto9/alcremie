@@ -2,23 +2,21 @@
 
 import { Combobox } from "@headlessui/react"
 import { SlidersHorizontal, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Drawer from "react-modern-drawer"
-import { useQuery } from "react-query"
 import { useNSFW } from "@/contexts/useNSFW"
-import { api } from "@/lib/axios"
 import type { Tag } from "@/types/Tag"
 
 const compareTag = (a?: Tag, b?: Tag): boolean => a?.name.toLowerCase() === b?.name.toLowerCase()
 
-async function getTags(text: string): Promise<Tag[]> {
-  const { data } = await api.get("tag", {
-    params: {
-      q: text,
-      limit: 30,
-    },
-  })
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? ""
 
+// ponytail: fetch nativo em vez de axios/react-query, removidos nesta tarefa —
+// mesma nota de useNSFW.tsx, o NSFW inteiro é reescrito na Onda 3 (Task 7).
+async function getTags(text: string): Promise<Tag[]> {
+  const params = new URLSearchParams({ q: text, limit: "30" })
+  const response = await fetch(`${API_URL}/tag?${params}`)
+  const data = await response.json()
   return data.tag
 }
 
@@ -28,17 +26,23 @@ export function SideNavFilter() {
   const [selectedTag, setSelectedTag] = useState<Tag | undefined>(undefined)
   const [query, setQuery] = useState<string>("")
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [tags, setTags] = useState<Tag[]>([])
 
   const toggleDrawer = () => setIsOpen((prevState) => !prevState)
 
-  const { data: tags } = useQuery({
-    queryKey: `tags/search/${query}`,
-    queryFn: () => getTags(query),
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: false,
-    refetchInterval: false,
-  })
+  useEffect(() => {
+    let cancelled = false
+
+    getTags(query).then((fetched) => {
+      if (!cancelled) {
+        setTags(fetched)
+      }
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [query])
 
   const handleSearch = () => {
     let tagId = ""
