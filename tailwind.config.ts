@@ -10,6 +10,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Preflight aplica isso a todo elemento, com ou sem borda visível. O
+      // padrão do Tailwind é gray-200 — vaza um cinza que não é nenhum token
+      // da paleta em qualquer elemento sem cor de borda explícita. currentColor
+      // é o valor que o navegador reporta quando não há `border-color` nenhum.
+      borderColor: {
+        DEFAULT: "currentColor",
+      },
       colors: {
         rail: "#161618",
         sidebar: "#1B1B1F",
