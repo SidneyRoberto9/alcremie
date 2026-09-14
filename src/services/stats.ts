@@ -10,5 +10,10 @@ const DEFAULTS = { images: 0, tags: 0, requests: 0 }
  */
 export const getStatistics = async () => {
   const rows = await db.select({ key: counters.key, value: counters.value }).from(counters)
-  return { ...DEFAULTS, ...Object.fromEntries(rows.map((r) => [r.key, r.value])) } as typeof DEFAULTS
+  const byKey = new Map(rows.map((r) => [r.key, r.value]))
+  return {
+    images: byKey.get("images") ?? DEFAULTS.images,
+    tags: byKey.get("tags") ?? DEFAULTS.tags,
+    requests: byKey.get("requests") ?? DEFAULTS.requests,
+  }
 }
