@@ -12,4 +12,8 @@ export const middleware = (request: NextRequest) => {
   return NextResponse.redirect(url)
 }
 
-export const config = { matcher: ["/nsfw/:path*", "/nsfw"] }
+// "/nsfw" sozinho seria redundante: o grupo de parâmetro de "/nsfw/:path*" é
+// opcional, então esse padrão já casa com o "/nsfw" nu (confirmado
+// compilando os dois com o path-to-regexp do próprio Next — ver
+// middleware.test.ts).
+export const config = { matcher: ["/nsfw/:path*"] }
