@@ -49,8 +49,13 @@ const PAGES = [
  * Para os contêineres de altura total, comparar `h` puniria a implementação por
  * um motivo sem sentido — e tornaria o gate de 98 inalcançável. Comparamos só
  * largura e posição x nesses.
+ *
+ * `masonry` entra pelo mesmo motivo: a altura da grade é função da quantidade
+ * de linhas (quantas imagens o banco tem), não de fidelidade de design — a
+ * prancha desenha 19 imagens, o dev local pode ter só um punhado. Só largura
+ * e posição x são significativas aqui também.
  */
-const HEIGHT_EXEMPT = new Set(['rail', 'sidebar', 'content'])
+const HEIGHT_EXEMPT = new Set(['rail', 'sidebar', 'content', 'masonry'])
 
 const REFERENCE_DIR = path.join(HERE, 'reference')
 
