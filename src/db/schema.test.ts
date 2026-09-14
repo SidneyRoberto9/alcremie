@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm"
 import { afterAll, expect, test } from "vitest"
 import { db } from "@/db/client"
-import { images } from "@/db/schema"
+import { images, imageTags, tags } from "@/db/schema"
 
 const base = {
   cloudinaryVersion: 1,
@@ -12,6 +12,7 @@ const base = {
 
 afterAll(async () => {
   await db.delete(images).where(sql`${images.cloudinaryId} LIKE 'test/%'`)
+  await db.delete(tags).where(sql`${tags.slug} LIKE 'test-%'`)
 })
 
 test("is_nsfw é derivado do rating, não gravado", async () => {
@@ -43,6 +44,17 @@ test("apagar imagem leva as tags junto, sem código nenhum", async () => {
     .insert(images)
     .values({ ...base, contentHash: "d".repeat(64), cloudinaryId: "test/cascade", rating: "general" })
     .returning({ id: images.id })
+
+  const [tag] = await db
+    .insert(tags)
+    .values({ name: "test-cascade-tag", slug: "test-cascade-tag" })
+    .returning({ id: tags.id })
+
+  await db.insert(imageTags).values({ imageId: row.id, tagId: tag.id })
+
+  const linked = await db.execute(sql`SELECT count(*)::int AS n FROM image_tags WHERE image_id = ${row.id}`)
+
+  expect(linked[0].n).toBe(1)
 
   await db.delete(images).where(eq(images.id, row.id))
 
