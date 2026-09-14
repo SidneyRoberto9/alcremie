@@ -16,21 +16,26 @@ const TIED_HASHES = Array.from({ length: 3 }, (_, i) => `t${i}`.padEnd(64, "0"))
 const TIED_AT = new Date(Date.UTC(2020, 1, 1))
 
 let tiedIds: string[] = []
+let dayIds: string[] = []
 let tagId = ""
 
 beforeAll(async () => {
-  await db.insert(images).values(
-    HASHES.map((contentHash, i) => ({
-      contentHash,
-      cloudinaryId: `svc-test/cursor-${i}`,
-      cloudinaryVersion: 1,
-      width: 100,
-      height: 100,
-      bytes: 1,
-      rating: "general" as const,
-      createdAt: new Date(Date.UTC(2020, 0, 1 + i)),
-    }))
-  )
+  const dayRows = await db
+    .insert(images)
+    .values(
+      HASHES.map((contentHash, i) => ({
+        contentHash,
+        cloudinaryId: `svc-test/cursor-${i}`,
+        cloudinaryVersion: 1,
+        width: 100,
+        height: 100,
+        bytes: 1,
+        rating: "general" as const,
+        createdAt: new Date(Date.UTC(2020, 0, 1 + i)),
+      }))
+    )
+    .returning({ id: images.id })
+  dayIds = dayRows.map((r) => r.id)
 
   const tiedRows = await db
     .insert(images)
@@ -102,17 +107,23 @@ test("o cursor não repete nem pula linhas", async () => {
 
 test("o desempate por id resolve linhas com o mesmo createdAt", async () => {
   const expectedTiedOrder = [...tiedIds].sort((a, b) => (a > b ? -1 : a < b ? 1 : 0))
+  // O banco de dev carrega imagens reais fora deste teste (seed). Paginar o
+  // feed inteiro e filtrar pelas linhas conhecidas deste describe é o que
+  // isola o teste sem exigir que a tabela esteja vazia fora dele.
+  const ownIds = new Set([...dayIds, ...tiedIds])
 
-  const pages: FeedImage[] = []
+  const allPages: FeedImage[] = []
   let cursor: string | undefined
   for (let i = 0; i < 10; i++) {
     const page = await fetchImageFeed({ nsfw: false, limit: 2, cursor })
-    pages.push(...page.data)
+    allPages.push(...page.data)
     if (!page.hasNext) {
       break
     }
     cursor = page.cursor ?? undefined
   }
+
+  const pages = allPages.filter((row) => ownIds.has(row.id))
 
   expect(pages).toHaveLength(HASHES.length + TIED_HASHES.length)
 
