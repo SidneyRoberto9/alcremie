@@ -4,7 +4,7 @@ import "react-photo-view/dist/react-photo-view.css"
 import "react-toastify/dist/ReactToastify.css"
 
 import type { Metadata } from "next"
-import { Roboto } from "next/font/google"
+import { Archivo, Eczar, JetBrains_Mono } from "next/font/google"
 import type { ReactNode } from "react"
 import { ToastContainer } from "react-toastify"
 
@@ -14,7 +14,9 @@ import { Providers } from "@/components/Providers"
 import { SideNavbar } from "@/components/sideNav/SideNavbar"
 import Favicon from "../../public/favicon.ico"
 
-const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] })
+const archivo = Archivo({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sans" })
+const eczar = Eczar({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-display" })
+const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono" })
 
 export const metadata: Metadata = {
   title: "Home | Alcremie",
@@ -28,7 +30,7 @@ export interface LayoutProps {
 
 export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="en" className={roboto.className}>
+    <html lang="en" className={`${archivo.variable} ${eczar.variable} ${mono.variable} font-sans`}>
       <head>
         <Analytics />
       </head>
