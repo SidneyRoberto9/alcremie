@@ -3,7 +3,6 @@
 import { createHash } from "node:crypto"
 import { v2 as cloudinary } from "cloudinary"
 import sharp from "sharp"
-import { auth } from "@/lib/auth"
 import { createImageWithTags } from "@/services/images"
 import { ratingOf, tagImage } from "@/services/tagger"
 
@@ -15,14 +14,6 @@ type UploadResult = { ok: true; data: { id: string; rating: string; tags: string
 // cliente (use-upload-queue.ts) controla a serialização — paralelizar aqui
 // multiplicaria a memória do processo por arquivo em voo.
 export const uploadOne = async (formData: FormData): Promise<UploadResult> => {
-  const session = await auth()
-
-  // Segunda checagem independente do middleware: o middleware é defesa em
-  // profundidade, a Server Action é o limite de verdade.
-  if (session?.user?.role !== "admin") {
-    return { ok: false, error: "not allowed" }
-  }
-
   const file = formData.get("file")
 
   if (!(file instanceof File)) {

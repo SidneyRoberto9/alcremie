@@ -1,5 +1,6 @@
 import { OctagonAlert, Shield } from "lucide-react"
 import type { Metadata } from "next"
+import { Fragment } from "react"
 import { z } from "zod"
 import { Pagination } from "@/components/gallery/pagination"
 import { TagFilter } from "@/components/gallery/tag-filter"
@@ -26,12 +27,12 @@ const Page = async ({ searchParams }: PageProps) => {
   ])
 
   return (
-    <>
+    <Fragment>
       <Topbar icon={OctagonAlert} title="NSFW" right={<ApiStatus />} />
       <div className="flex flex-none items-center gap-2.5 border-b border-warn/[0.22] bg-warn/[0.08] px-6 py-2.5">
         <Shield size={16} strokeWidth={1.75} className="text-warn" />
         <span className="text-[13px] text-warn">
-          Age-restricted mode. Verified for this session — expires when you sign out.
+          Age-restricted mode. This section contains content intended for adults.
         </span>
         <div className="grow" />
         <span className="font-mono text-xs text-warn/80 sm:text-[11px]">nsfw=true</span>
@@ -43,7 +44,7 @@ const Page = async ({ searchParams }: PageProps) => {
       {"totalPage" in result ? (
         <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/nsfw" />
       ) : null}
-    </>
+    </Fragment>
   )
 }
 
