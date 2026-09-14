@@ -24,9 +24,23 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { chromium } from '@playwright/test'
+import { encode } from 'next-auth/jwt'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const OUT = path.join(HERE, 'score-report')
+
+// /upload é admin-gated (Tarefa 8). Assina a sessão exatamente como
+// middleware.test.ts assina a sua — encode de next-auth/jwt com o mesmo
+// AUTH_SECRET — em vez de inventar outra forma de logar. Nome de cookie sem
+// o prefixo __Secure- porque o scorer roda contra http://localhost, não https
+// (é o mesmo nome que o Auth.js usa em dev, confirmado no relatório da
+// Tarefa 9).
+const SESSION_COOKIE = 'authjs.session-token'
+const adminSession = await encode({
+  secret: process.env.AUTH_SECRET,
+  salt: SESSION_COOKIE,
+  token: { sub: '11111111-1111-1111-1111-111111111111', role: 'admin', email: 'user@test.dev' },
+})
 
 const PAGES = [
   { name: 'home', route: '/', reference: 'ref-Main.html' },
@@ -43,7 +57,21 @@ const PAGES = [
     reference: 'ref-AgeGate.html',
     ignoreProbes: ['rail', 'sidebar', 'topbar', 'content', 'masonry', 'nav-active'],
   },
-  { name: 'upload', route: '/upload', reference: 'ref-Upload.html' },
+  {
+    name: 'upload',
+    route: '/upload',
+    reference: 'ref-Upload.html',
+    // Sem sessão de admin, o middleware redireciona pra "/" e o scorer mediria
+    // a Home acreditando medir esta página.
+    cookies: [{ name: SESSION_COOKIE, value: adminSession }],
+    // `chip` só existe numa linha da fila já concluída, com tags detectadas de
+    // verdade; a prancha desenha uma fila em andamento, a página recém-
+    // carregada tem a fila vazia. Nenhum passe automatizado sobe um arquivo de
+    // verdade e espera o upload terminar, então não há como esse probe existir
+    // num carregamento a frio — fabricar um chip falso seria pior que perder
+    // os pontos.
+    ignoreProbes: ['chip'],
+  },
 ]
 
 /**
