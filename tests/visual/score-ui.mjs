@@ -32,7 +32,9 @@ const PAGES = [
   { name: 'home', route: '/', reference: 'ref-Main.html' },
   { name: 'gallery', route: '/gallery', reference: 'ref-Gallery.html' },
   { name: 'recent', route: '/recent', reference: 'ref-Recent.html' },
-  { name: 'nsfw', route: '/nsfw', reference: 'ref-Nsfw.html' },
+  // /nsfw exige o cookie de idade; sem ele o middleware redireciona pro age
+  // gate e o scorer mediria a página errada acreditando medir esta.
+  { name: 'nsfw', route: '/nsfw', reference: 'ref-Nsfw.html', cookies: [{ name: 'age_ok', value: '1' }] },
   // O gate de idade vive no grupo (redirect), fora do shell: a prancha desenha o
   // shell atrás do modal, a implementação não tem. Ignoramos os probes do shell.
   {
@@ -269,6 +271,14 @@ const run = async () => {
 
   for (const target of pages) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+
+    // Precisa estar escopado pra BASE (não pro file:// da prancha) — páginas
+    // sem `cookies` seguem sem autenticar, o age gate incluso: ele é a tela
+    // que se vê sem o cookie.
+    if (target.cookies) {
+      await context.addCookies(target.cookies.map((cookie) => ({ ...cookie, url: BASE })))
+    }
+
     const tab = await context.newPage()
 
     await tab.goto(`file://${path.join(REFERENCE_DIR, target.reference)}`, { waitUntil: 'networkidle' })
