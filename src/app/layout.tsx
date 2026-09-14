@@ -1,5 +1,4 @@
 import "@/styles/globals.css"
-import "react-modern-drawer/dist/index.css"
 import "react-photo-view/dist/react-photo-view.css"
 
 import type { Metadata } from "next"
