@@ -9,7 +9,9 @@ interface CardProps {
 
 // Intl.RelativeTimeFormat em vez de trazer date-fns só para "2 min ago" —
 // nenhuma outra tela do rebrand precisa formatar datas ainda.
-const timeAgo = (date: Date) => {
+// Exportado (não só usado aqui) para o teste em feed.test.ts poder provar que
+// ele não explode com o createdAt já revivido por reviveFeedPage.
+export const timeAgo = (date: Date) => {
   const minutes = Math.round((date.getTime() - Date.now()) / 60_000)
   if (Math.abs(minutes) < 60) {
     return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(minutes, "minute")
