@@ -1,49 +1,50 @@
-"use client"
-
-import { Box } from "@/components/Box"
-import { LoadingPage } from "@/components/LoadingPage"
+import { OctagonAlert, Shield } from "lucide-react"
+import type { Metadata } from "next"
+import { z } from "zod"
+import { Pagination } from "@/components/gallery/pagination"
+import { TagFilter } from "@/components/gallery/tag-filter"
 import { Masonry } from "@/components/masonry"
-import { Pagination } from "@/components/nsfw/Pagination"
-import { SideNavFilter } from "@/components/nsfw/SideNavFilter"
-import { useNSFW } from "@/contexts/useNSFW"
-import type { Image } from "@/types/Image"
-import type { FeedImage } from "@/types/image"
+import { ApiStatus } from "@/components/shell/api-status"
+import { Topbar } from "@/components/shell/topbar"
+import { fetchImagePage, fetchImagesByTag } from "@/services/images"
+import { getTagById } from "@/services/tags"
 
-// Scaffolding, not a considered design: this page is Task 7's to rewrite behind
-// the cookie/middleware gate as a Server Component reading fetchImagePage
-// directly. useNSFW still returns the old REST shape (no cloudinaryId/version/
-// width/height), so this reconstructs them from the one real field it does
-// carry — a full Cloudinary url — just to keep the shared Masonry component's
-// contract intact.
-const CLOUDINARY_URL_RE = /\/upload\/v(\d+)\/(.+)\.\w+$/
+export const metadata: Metadata = { title: "NSFW | Alcremie" }
 
-const toFeedImage = (image: Image): FeedImage => {
-  const match = image.url.match(CLOUDINARY_URL_RE)
-
-  return {
-    id: image.id,
-    cloudinaryId: match?.[2] ?? image.assetId,
-    cloudinaryVersion: match ? Number(match[1]) : 1,
-    width: 500,
-    height: 500,
-    placeholder: null,
-    rating: image.isNsfw ? "explicit" : "general",
-    createdAt: image.createdAt,
-  }
+interface PageProps {
+  searchParams: Promise<{ page?: string; tag?: string }>
 }
 
-export default function Page() {
-  const { images, isLoading } = useNSFW()
+const Page = async ({ searchParams }: PageProps) => {
+  const { page: rawPage, tag: rawTag } = await searchParams
+  const page = Math.max(1, Number(rawPage) || 1)
+  const tag = z.uuid().safeParse(rawTag).success ? rawTag : undefined
 
-  if (isLoading) {
-    return <LoadingPage />
-  }
+  const [result, selectedTag] = await Promise.all([
+    tag ? fetchImagesByTag({ tagId: tag, nsfw: true, limit: 35 }) : fetchImagePage({ nsfw: true, page, limit: 35 }),
+    tag ? getTagById(tag) : Promise.resolve(null),
+  ])
 
   return (
-    <Box>
-      <SideNavFilter />
-      <Masonry images={images.map(toFeedImage)} />
-      <Pagination />
-    </Box>
+    <>
+      <Topbar icon={OctagonAlert} title="NSFW" right={<ApiStatus />} />
+      <div className="flex flex-none items-center gap-2.5 border-b border-warn/[0.22] bg-warn/[0.08] px-6 py-2.5">
+        <Shield size={16} strokeWidth={1.75} className="text-warn" />
+        <span className="text-[13px] text-warn">
+          Age-restricted mode. Verified for this session — expires when you sign out.
+        </span>
+        <div className="grow" />
+        <span className="font-mono text-[11px] text-warn/80">nsfw=true</span>
+      </div>
+      <TagFilter selected={selectedTag} basePath="/nsfw" />
+      <div className="grow px-6 py-4">
+        <Masonry images={result.data} columns={5} />
+      </div>
+      {"totalPage" in result ? (
+        <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/nsfw" />
+      ) : null}
+    </>
   )
 }
+
+export default Page
