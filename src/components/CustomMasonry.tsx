@@ -1,13 +1,13 @@
-'use client';
+"use client"
 
-import { PhotoView } from 'react-photo-view';
-import Masonry from 'react-layout-masonry';
-import Image from 'next/image';
+import Image from "next/image"
+import Masonry from "react-layout-masonry"
+import { PhotoView } from "react-photo-view"
 
-import { Image as IMG } from '@/@Types/Image';
+import type { Image as IMG } from "@/types/Image"
 
 interface MasonryProps {
-  data?: IMG[];
+  data?: IMG[]
 }
 
 export function CustomMasonry({ data = [] }: MasonryProps) {
@@ -18,21 +18,21 @@ export function CustomMasonry({ data = [] }: MasonryProps) {
     1440: 5,
     1920: 6,
     2144: 7,
-  };
+  }
 
   return (
     <div className="w-full">
       <Masonry columns={Breakpoints}>
         {data.map((item) => (
-          <div className="cursor-pointer">
-            <PhotoView key={item.id} src={item.url}>
+          <div key={item.id} className="cursor-pointer">
+            <PhotoView src={item.url}>
               <Image
                 key={item.assetId}
                 src={item.url}
                 alt={item.id}
                 width={500}
                 height={500}
-                className="w-full h-full object-cover block"
+                className="block h-full w-full object-cover"
                 priority={true}
               />
             </PhotoView>
@@ -40,5 +40,5 @@ export function CustomMasonry({ data = [] }: MasonryProps) {
         ))}
       </Masonry>
     </div>
-  );
+  )
 }

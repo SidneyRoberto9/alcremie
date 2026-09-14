@@ -1,16 +1,16 @@
-'use client';
-import { useGallery } from '@/context/useGallery';
-import { LoadingPage } from '@/component/LoadingPage';
-import { CustomMasonry } from '@/component/CustomMasonry';
-import { Box } from '@/component/Box';
-import { SideNavFilter } from '@/component/gallery/SideNavFilter';
-import { Pagination } from '@/component/gallery/Pagination';
+"use client"
+import { Box } from "@/components/Box"
+import { CustomMasonry } from "@/components/CustomMasonry"
+import { Pagination } from "@/components/gallery/Pagination"
+import { SideNavFilter } from "@/components/gallery/SideNavFilter"
+import { LoadingPage } from "@/components/LoadingPage"
+import { useGallery } from "@/contexts/useGallery"
 
-export default function page() {
-  const { images, isLoading } = useGallery();
+export default function Page() {
+  const { images, isLoading } = useGallery()
 
   if (isLoading) {
-    return <LoadingPage />;
+    return <LoadingPage />
   }
 
   return (
@@ -19,5 +19,5 @@ export default function page() {
       <CustomMasonry data={images} />
       <Pagination />
     </Box>
-  );
+  )
 }

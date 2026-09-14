@@ -1,11 +1,13 @@
 export function LoadingPage() {
   return (
-    <div className="flex items-center justify-center h-screen w-screen">
+    <div className="flex h-screen w-screen items-center justify-center">
       <svg
-        className="animate-spin h-28 w-28"
+        aria-hidden="true"
+        className="h-28 w-28 animate-spin"
         fill="none"
         viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg">
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           className="text-violet-600"
           d="M12 22C17.5228 22 22 17.5228 22 12H19C19 15.866 15.866 19 12 19V22Z"
@@ -18,5 +20,5 @@ export function LoadingPage() {
         />
       </svg>
     </div>
-  );
+  )
 }

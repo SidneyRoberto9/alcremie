@@ -1,19 +1,19 @@
-'use client';
+"use client"
 
-import { ReactNode, createContext, useContext, useState } from 'react';
+import { createContext, type ReactNode, useContext, useState } from "react"
 
-import { api } from '@/lib/axios';
+import { api } from "@/lib/axios"
 
 interface UploadContextProps {
-  imagesToUpload: File[];
-  isLoading: boolean;
-  upload: () => Promise<void>;
-  remove: (remove: File) => void;
-  setImages: (imagesToUpload: File[]) => void;
+  imagesToUpload: File[]
+  isLoading: boolean
+  upload: () => Promise<void>
+  remove: (remove: File) => void
+  setImages: (imagesToUpload: File[]) => void
 }
 
 interface UploadContextProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 const initialContext: UploadContextProps = {
@@ -22,35 +22,37 @@ const initialContext: UploadContextProps = {
   upload: () => Promise.resolve(),
   remove: () => {},
   setImages: () => {},
-};
+}
 
-const UploadContext = createContext<UploadContextProps>(initialContext);
+const UploadContext = createContext<UploadContextProps>(initialContext)
 
 export function UploadContextProvider({ children }: UploadContextProviderProps) {
-  const [imagesToUpload, setImagesToUpload] = useState<File[]>(initialContext.imagesToUpload);
-  const [isLoading, setIsLoading] = useState<boolean>(initialContext.isLoading);
+  const [imagesToUpload, setImagesToUpload] = useState<File[]>(initialContext.imagesToUpload)
+  const [isLoading, setIsLoading] = useState<boolean>(initialContext.isLoading)
 
   function setImages(images: File[]) {
-    const list = new Set([...imagesToUpload, ...images]);
-    setImagesToUpload(Array.from(list));
+    const list = new Set([...imagesToUpload, ...images])
+    setImagesToUpload(Array.from(list))
   }
 
   function remove(remove: File) {
     if (isLoading) {
-      return;
+      return
     }
 
-    setImagesToUpload((prev) => prev.filter((file, _) => file !== remove));
+    setImagesToUpload((prev) => prev.filter((file, _) => file !== remove))
   }
 
   async function upload() {
-    setIsLoading(true);
+    setIsLoading(true)
 
-    const formData = new FormData();
+    const formData = new FormData()
 
-    imagesToUpload.forEach((image) => formData.append('image', image));
+    imagesToUpload.forEach((image) => {
+      formData.append("image", image)
+    })
 
-    await api.post('/upload', formData);
+    await api.post("/upload", formData)
 
     // await toast.promise(), {
     //   pending: {
@@ -87,8 +89,8 @@ export function UploadContextProvider({ children }: UploadContextProviderProps) 
     //   },
     // });
 
-    setImagesToUpload([]);
-    setIsLoading(false);
+    setImagesToUpload([])
+    setIsLoading(false)
   }
 
   return (
@@ -103,7 +105,7 @@ export function UploadContextProvider({ children }: UploadContextProviderProps) 
     >
       {children}
     </UploadContext.Provider>
-  );
+  )
 }
 
-export const useUpload = () => useContext(UploadContext);
+export const useUpload = () => useContext(UploadContext)

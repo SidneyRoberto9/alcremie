@@ -1,17 +1,17 @@
-'use client';
+"use client"
 
-import { useNSFW } from '@/context/useNSFW';
-import { LoadingPage } from '@/component/LoadingPage';
-import { CustomMasonry } from '@/component/CustomMasonry';
-import { Box } from '@/component/Box';
-import { SideNavFilter } from '@/component/nsfw/SideNavFilter';
-import { Pagination } from '@/component/nsfw/Pagination';
+import { Box } from "@/components/Box"
+import { CustomMasonry } from "@/components/CustomMasonry"
+import { LoadingPage } from "@/components/LoadingPage"
+import { Pagination } from "@/components/nsfw/Pagination"
+import { SideNavFilter } from "@/components/nsfw/SideNavFilter"
+import { useNSFW } from "@/contexts/useNSFW"
 
-export default function page() {
-  const { images, isLoading } = useNSFW();
+export default function Page() {
+  const { images, isLoading } = useNSFW()
 
   if (isLoading) {
-    return <LoadingPage />;
+    return <LoadingPage />
   }
 
   return (
@@ -20,5 +20,5 @@ export default function page() {
       <CustomMasonry data={images} />
       <Pagination />
     </Box>
-  );
+  )
 }
