@@ -41,3 +41,7 @@ models/
 fixtures/seed/
 tests/visual/score-report/
 .superpowers/
+
+# next dev auto-generates these agent-rules files
+/CLAUDE.md
+/AGENTS.md
