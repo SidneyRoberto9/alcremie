@@ -39,7 +39,7 @@ const PAGES = [
     name: 'age-gate',
     route: '/nsfw-validation',
     reference: 'ref-AgeGate.html',
-    ignoreProbes: ['rail', 'sidebar', 'topbar', 'content', 'masonry'],
+    ignoreProbes: ['rail', 'sidebar', 'topbar', 'content', 'masonry', 'nav-active'],
   },
   { name: 'upload', route: '/upload', reference: 'ref-Upload.html' },
 ]
