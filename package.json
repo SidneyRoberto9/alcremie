@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome check ./src",
+    "tc": "tsc --noEmit",
+    "biome:fix": "biome check --write ./src",
+    "biome:format": "biome format --write ./src",
+    "test": "vitest run",
     "prepare": "husky"
   },
   "dependencies": {
