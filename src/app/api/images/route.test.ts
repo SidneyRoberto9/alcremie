@@ -3,7 +3,7 @@ import { NextRequest } from "next/server"
 import { afterAll, beforeAll, expect, test } from "vitest"
 import { GET } from "@/app/api/images/route"
 import { db } from "@/db/client"
-import { images } from "@/db/schema"
+import { images, imageTags, tags } from "@/db/schema"
 import { encodeCursor } from "@/services/images"
 
 const call = (qs: string) => GET(new NextRequest(`http://localhost/api/images${qs}`))
@@ -15,8 +15,12 @@ const call = (qs: string) => GET(new NextRequest(`http://localhost/api/images${q
 // pagina o feed nsfw=false inteiro e conta linhas — uma fixture nsfw=false
 // aqui contaminaria essa contagem quando os arquivos rodam em paralelo.
 const ROUTE_TEST_HASHES = ["r0".padEnd(64, "0"), "r1".padEnd(64, "0")]
+// Tag própria do arquivo, não emprestada de nenhuma outra suíte — só existe
+// para provar que a rota devolve tags junto do feed por cursor.
+const ROUTE_TEST_TAG_NAME = "route-test-tag"
 let newestRowCursor = ""
 let newestRowId = ""
+let routeTestTagId = ""
 
 beforeAll(async () => {
   const rows = await db
@@ -51,10 +55,19 @@ beforeAll(async () => {
   }
   newestRowCursor = encodeCursor({ createdAt: newest.createdAt, id: newest.id })
   newestRowId = newest.id
+
+  const [tag] = await db
+    .insert(tags)
+    .values({ name: ROUTE_TEST_TAG_NAME, slug: ROUTE_TEST_TAG_NAME })
+    .returning({ id: tags.id })
+  routeTestTagId = tag.id
+
+  await db.insert(imageTags).values({ imageId: newestRowId, tagId: routeTestTagId, score: 0.9 })
 })
 
 afterAll(async () => {
   await db.delete(images).where(inArray(images.contentHash, ROUTE_TEST_HASHES))
+  await db.delete(tags).where(inArray(tags.id, [routeTestTagId]))
 })
 
 test("page fora de faixa é rejeitado, não coagido", async () => {
@@ -101,4 +114,20 @@ test("cursor sem tag vai para o feed, não para a paginação por offset", async
 
   const ids = body.data.map((row: { id: string }) => row.id)
   expect(ids).not.toContain(newestRowId)
+})
+
+// Trava exatamente o defeito da rodada 1 de correções: a rota silenciosamente
+// voltando a usar fetchImageFeed (sem tags) em vez de fetchImageFeedWithTags.
+// Sem isto, nada no conjunto de testes acusaria essa regressão de novo.
+test("cursor sem tag inclui as tags de cada imagem", async () => {
+  const response = await call("?nsfw=true&cursor=x&limit=100")
+  expect(response.status).toBe(200)
+
+  const body = await response.json()
+  const row = body.data.find((item: { id: string }) => item.id === newestRowId)
+
+  expect(row).toBeDefined()
+  expect(Array.isArray(row.tags)).toBe(true)
+  expect(row.tags.length).toBeGreaterThan(0)
+  expect(row.tags).toContain(ROUTE_TEST_TAG_NAME)
 })

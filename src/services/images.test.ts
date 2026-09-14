@@ -1,8 +1,8 @@
-import { inArray } from "drizzle-orm"
-import { afterAll, beforeAll, expect, test } from "vitest"
+import { eq, inArray } from "drizzle-orm"
+import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { db } from "@/db/client"
 import { images, imageTags, tags } from "@/db/schema"
-import { decodeCursor, encodeCursor, fetchImageFeed, fetchImagesByTag } from "@/services/images"
+import { decodeCursor, encodeCursor, fetchImageFeed, fetchImageFeedWithTags, fetchImagesByTag } from "@/services/images"
 import type { FeedImage } from "@/types/image"
 
 // cloudinaryId/slug NÃO começam com "test/" nem "test-": o afterAll de
@@ -162,4 +162,52 @@ test("cursor malformado cai na primeira página em vez de estourar", () => {
 
   const round = { createdAt: new Date("2020-01-01T00:00:00.000Z"), id: "abc" }
   expect(decodeCursor(encodeCursor(round))).toEqual(round)
+})
+
+// Prefixo próprio ("feed-tags-test/"), distinto de "svc-test" (acima, mesmo
+// arquivo), "route-test/" (route.test.ts) e "test/" (schema.test.ts) — trava
+// o defeito da rodada 1 de correções: fetchImageFeed sozinho não carrega
+// tags, e nada além deste teste chamava fetchImageFeedWithTags.
+describe("fetchImageFeedWithTags", () => {
+  const FEED_TAGS_HASH = "ft0".padEnd(64, "0")
+  const FEED_TAGS_TAG_NAME = "feed-tags-test-tag"
+  let imageId = ""
+  let tagId = ""
+
+  beforeAll(async () => {
+    const [row] = await db
+      .insert(images)
+      .values({
+        contentHash: FEED_TAGS_HASH,
+        cloudinaryId: "feed-tags-test/card",
+        cloudinaryVersion: 1,
+        width: 100,
+        height: 100,
+        bytes: 1,
+        rating: "general" as const,
+      })
+      .returning({ id: images.id })
+    imageId = row.id
+
+    const [tag] = await db
+      .insert(tags)
+      .values({ name: FEED_TAGS_TAG_NAME, slug: FEED_TAGS_TAG_NAME })
+      .returning({ id: tags.id })
+    tagId = tag.id
+
+    await db.insert(imageTags).values({ imageId, tagId, score: 0.9 })
+  })
+
+  afterAll(async () => {
+    await db.delete(images).where(eq(images.contentHash, FEED_TAGS_HASH))
+    await db.delete(tags).where(eq(tags.id, tagId))
+  })
+
+  test("cada linha do feed carrega as tags da imagem, não só as colunas de FeedImage", async () => {
+    const page = await fetchImageFeedWithTags({ nsfw: false, limit: 100 })
+    const row = page.data.find((item) => item.id === imageId)
+
+    expect(row).toBeDefined()
+    expect(row?.tags).toContain(FEED_TAGS_TAG_NAME)
+  })
 })
