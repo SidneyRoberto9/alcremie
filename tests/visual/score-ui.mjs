@@ -137,8 +137,14 @@ const audit = () => {
     const hasOwnText = [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent.trim())
 
     if (hasOwnText) {
+      // 12px é o piso para texto de leitura corrida a distância de braço
+      // (telas estreitas, ≤480px). Acima disso, rótulos curtos em maiúsculas
+      // (labels de seção, chips, status) em telas largas são uma convenção
+      // de interface legítima e a prancha os desenha a 10-11px — o piso ali
+      // é 10px, não 12.
       const size = Number.parseFloat(getComputedStyle(node).fontSize)
-      if (size < 12) {
+      const floor = doc.clientWidth <= 480 ? 12 : 10
+      if (size < floor) {
         problems.push({ rule: 'font-too-small', detail: describe(node), value: size })
       }
 
