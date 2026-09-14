@@ -8,7 +8,7 @@ export default defineConfig({
     projects: [
       {
         resolve: {
-          alias: { "@": path.resolve(__dirname, "./src") },
+          alias: { "@": path.resolve(import.meta.dirname, "./src") },
         },
         test: {
           name: "node",
@@ -19,7 +19,7 @@ export default defineConfig({
       {
         plugins: [react()],
         resolve: {
-          alias: { "@": path.resolve(__dirname, "./src") },
+          alias: { "@": path.resolve(import.meta.dirname, "./src") },
         },
         test: {
           name: "jsdom",
