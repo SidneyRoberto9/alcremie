@@ -23,7 +23,12 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
-          include: ["src/db/**/*.test.ts", "src/services/**/*.test.ts", "src/app/api/**/*.test.ts"],
+          include: [
+            "src/db/**/*.test.ts",
+            "src/services/**/*.test.ts",
+            "src/app/api/**/*.test.ts",
+            "src/middleware.test.ts",
+          ],
           // Os arquivos aqui batem no mesmo Postgres de verdade, sem
           // transação por teste — em paralelo, fixtures de um arquivo (ex.:
           // linhas rating=general de schema.test.ts) vazam para contagens
