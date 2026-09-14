@@ -11,8 +11,6 @@
     "biome:fix": "biome check --write ./src",
     "biome:format": "biome format --write ./src",
     "test": "vitest run",
-    "ui:score": "node --env-file=.env.local tests/visual/score-ui.mjs",
-    "ui:score:one": "node --env-file=.env.local tests/visual/score-ui.mjs --only",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
