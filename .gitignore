@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# house
+models/
+fixtures/seed/
+tests/visual/score-report/
+.superpowers/
