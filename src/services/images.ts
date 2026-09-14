@@ -123,12 +123,8 @@ export const fetchImagesByTag = async (opts: {
  * TABLESAMPLE SYSTEM_ROWS(1) ou por um id sorteado dentro de MIN/MAX.
  */
 export const randomImage = async (nsfw = false) => {
-  const rows = await db
-    .select(FEED_COLUMNS)
-    .from(images)
-    .where(eq(images.isNsfw, nsfw))
-    .orderBy(sql`random()`)
-    .limit(1)
+  const random = sql`random()`
+  const rows = await db.select(FEED_COLUMNS).from(images).where(eq(images.isNsfw, nsfw)).orderBy(random).limit(1)
 
   return rows[0] ?? null
 }
