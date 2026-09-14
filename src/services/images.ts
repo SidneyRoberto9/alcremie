@@ -1,7 +1,10 @@
-import { and, count, desc, eq, lt, or, sql } from "drizzle-orm"
+import { and, count, desc, eq, inArray, lt, or, sql } from "drizzle-orm"
 import { db } from "@/db/client"
 import { images, imageTags, tags } from "@/db/schema"
-import type { Cursor, FeedPage } from "@/types/image"
+import type { Cursor, FeedImageWithTags, FeedPage, TaggedFeedPage } from "@/types/image"
+
+// Teto de tags por card do /recent — a prancha mostra 4 a 5, nunca mais.
+const CARD_TAG_LIMIT = 5
 
 const FEED_COLUMNS = {
   id: images.id,
@@ -46,6 +49,51 @@ export const fetchImageFeed = async (opts: { nsfw: boolean; limit?: number; curs
     hasNext,
     cursor: last ? encodeCursor({ createdAt: last.createdAt, id: last.id }) : null,
   }
+}
+
+/**
+ * Mesma página do feed, com as tags de cada imagem penduradas (ordenadas por
+ * score, capadas em CARD_TAG_LIMIT) — é o que o card do /recent precisa para
+ * mostrar "o que o modelo achou", que FEED_COLUMNS sozinho não carrega. Uma
+ * segunda query batelada por IN(...), não uma por imagem: uma função à parte
+ * em vez de um parâmetro em fetchImageFeed para a galeria (que só pagina por
+ * número, nunca por cursor) nunca correr esse join à toa.
+ */
+export const fetchImageFeedWithTags = async (opts: {
+  nsfw: boolean
+  limit?: number
+  cursor?: string
+}): Promise<TaggedFeedPage> => {
+  const page = await fetchImageFeed(opts)
+
+  if (page.data.length === 0) {
+    return { ...page, data: [] }
+  }
+
+  const tagRows = await db
+    .select({ imageId: imageTags.imageId, name: tags.name })
+    .from(imageTags)
+    .innerJoin(tags, eq(tags.id, imageTags.tagId))
+    .where(
+      inArray(
+        imageTags.imageId,
+        page.data.map((row) => row.id)
+      )
+    )
+    .orderBy(desc(imageTags.score))
+
+  const tagsByImage = new Map<string, string[]>()
+  for (const row of tagRows) {
+    const list = tagsByImage.get(row.imageId) ?? []
+    if (list.length < CARD_TAG_LIMIT) {
+      list.push(row.name)
+    }
+    tagsByImage.set(row.imageId, list)
+  }
+
+  const data: FeedImageWithTags[] = page.data.map((row) => ({ ...row, tags: tagsByImage.get(row.id) ?? [] }))
+
+  return { ...page, data }
 }
 
 /**

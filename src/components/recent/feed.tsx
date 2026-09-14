@@ -3,9 +3,9 @@
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useRef } from "react"
 import { Card } from "@/components/recent/card"
-import type { FeedPage } from "@/types/image"
+import type { TaggedFeedPage } from "@/types/image"
 
-export const Feed = ({ initial }: { initial: FeedPage }) => {
+export const Feed = ({ initial }: { initial: TaggedFeedPage }) => {
   const sentinel = useRef<HTMLDivElement>(null)
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
@@ -14,7 +14,7 @@ export const Feed = ({ initial }: { initial: FeedPage }) => {
     initialData: { pages: [initial], pageParams: [null] },
     queryFn: async ({ pageParam }) => {
       const response = await fetch(`/api/images?limit=30${pageParam ? `&cursor=${pageParam}` : ""}`)
-      return (await response.json()) as FeedPage
+      return (await response.json()) as TaggedFeedPage
     },
     getNextPageParam: (last) => last.cursor,
   })

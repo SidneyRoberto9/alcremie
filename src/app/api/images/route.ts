@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
-import { fetchImageFeed, fetchImagePage, fetchImagesByTag } from "@/services/images"
+import { fetchImageFeedWithTags, fetchImagePage, fetchImagesByTag } from "@/services/images"
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).max(10_000).default(1),
@@ -29,8 +29,10 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json(await fetchImagesByTag({ tagId: tag, nsfw, limit, cursor }))
   }
 
+  // Só quem pagina pelo cursor é o /recent, e o card dele precisa das tags —
+  // por isso a versão com join aqui, não em fetchImagePage logo abaixo.
   if (cursor) {
-    return NextResponse.json(await fetchImageFeed({ nsfw, limit, cursor }))
+    return NextResponse.json(await fetchImageFeedWithTags({ nsfw, limit, cursor }))
   }
 
   return NextResponse.json(await fetchImagePage({ nsfw, page, limit }))

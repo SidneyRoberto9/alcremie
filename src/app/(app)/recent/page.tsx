@@ -2,12 +2,12 @@ import { GalleryVertical } from "lucide-react"
 import type { Metadata } from "next"
 import { Feed } from "@/components/recent/feed"
 import { Topbar } from "@/components/shell/topbar"
-import { fetchImageFeed } from "@/services/images"
+import { fetchImageFeedWithTags } from "@/services/images"
 
 export const metadata: Metadata = { title: "Recent | Alcremie" }
 
 const Page = async () => {
-  const initial = await fetchImageFeed({ nsfw: false, limit: 30 })
+  const initial = await fetchImageFeedWithTags({ nsfw: false, limit: 30 })
 
   return (
     <>

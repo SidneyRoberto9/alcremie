@@ -1,10 +1,10 @@
 import { Sparkles } from "lucide-react"
 import NextImage from "next/image"
-import type { FeedImage } from "@/types/image"
+import type { FeedImageWithTags } from "@/types/image"
 import { cloudinaryUrl } from "@/utils/cloudinary-url"
 
 interface CardProps {
-  image: FeedImage
+  image: FeedImageWithTags
 }
 
 // Intl.RelativeTimeFormat em vez de trazer date-fns só para "2 min ago" —
@@ -17,10 +17,6 @@ const timeAgo = (date: Date) => {
   return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(Math.round(minutes / 60), "hour")
 }
 
-// Sem service que junte tags a uma imagem do feed hoje (ver
-// src/components/home/random-panel.tsx para o mesmo limite): os dois campos
-// abaixo são reais (rating e dimensões vêm de FeedImage), só não são "tags"
-// no sentido do modelo.
 export const Card = ({ image }: CardProps) => (
   <article className="flex flex-col overflow-hidden rounded-xl border border-line bg-raise">
     <div className="flex items-center gap-2.5 px-3.5 py-3">
@@ -39,16 +35,18 @@ export const Card = ({ image }: CardProps) => (
       sizes="(max-width: 640px) 100vw, 620px"
       className="block w-full"
     />
-    <div className="flex flex-wrap gap-1.5 px-3.5 py-3">
-      {[image.rating, `${image.width}×${image.height}`].map((label) => (
-        <span
-          key={label}
-          data-probe="chip"
-          className="rounded-md border border-line bg-sidebar px-2.5 py-[5px] font-mono text-xs text-accent-soft"
-        >
-          {label}
-        </span>
-      ))}
-    </div>
+    {image.tags.length > 0 ? (
+      <div className="flex flex-wrap gap-1.5 px-3.5 py-3">
+        {image.tags.map((tag) => (
+          <span
+            key={tag}
+            data-probe="chip"
+            className="rounded-md border border-line bg-sidebar px-2.5 py-[5px] font-mono text-xs text-accent-soft"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    ) : null}
   </article>
 )
