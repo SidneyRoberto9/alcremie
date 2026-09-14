@@ -11,6 +11,8 @@
     "biome:fix": "biome check --write ./src",
     "biome:format": "biome format --write ./src",
     "test": "vitest run",
+    "ui:score": "node tests/visual/score-ui.mjs",
+    "ui:score:one": "node tests/visual/score-ui.mjs --only",
     "prepare": "husky"
   },
   "dependencies": {
@@ -40,6 +42,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.13",
+    "@playwright/test": "^1.63.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
