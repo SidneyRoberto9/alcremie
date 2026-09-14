@@ -10,8 +10,8 @@ export function NotFoundPage() {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-4">
       <img src="/not-found.png" alt="not-found" className="h-24 w-24 object-cover" />
-      <p className="text-3xl text-zinc-50">Page not Found</p>
-      <Link href="/" className="rounded-md px-4 py-2 text-zinc-50 shadow-md outline-none ring-1 ring-zinc-50">
+      <p className="text-3xl text-ink">Page not Found</p>
+      <Link href="/" className="rounded-md px-4 py-2 text-ink shadow-md outline-none ring-1 ring-ink">
         Go Home
       </Link>
     </div>

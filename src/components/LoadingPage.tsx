@@ -9,7 +9,7 @@ export function LoadingPage() {
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          className="text-violet-600"
+          className="text-accent-deep"
           d="M12 22C17.5228 22 22 17.5228 22 12H19C19 15.866 15.866 19 12 19V22Z"
           fill="currentColor"
         />

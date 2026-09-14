@@ -18,7 +18,7 @@ export function SideNavItem({ title, link, icon: Icon, isActive, closeDrawer, ..
         href={link}
         prefetch={false}
         onClick={closeDrawer}
-        className="mx-3 flex w-11/12 items-center gap-2 rounded-lg bg-lucide-300 p-2 text-zinc-100"
+        className="mx-3 flex w-11/12 items-center gap-2 rounded-lg bg-line-2 p-2 text-ink"
       >
         <Icon size={24} />
         <p>{title}</p>
@@ -32,7 +32,7 @@ export function SideNavItem({ title, link, icon: Icon, isActive, closeDrawer, ..
       href={link}
       prefetch={false}
       onClick={closeDrawer}
-      className="mx-3 flex w-11/12 items-center gap-2 rounded-lg p-2 text-zinc-100 transition-all duration-200 ease-in-out hover:bg-lucide-300"
+      className="mx-3 flex w-11/12 items-center gap-2 rounded-lg p-2 text-ink transition-all duration-200 ease-in-out hover:bg-line-2"
     >
       <Icon size={24} />
       <p>{title}</p>

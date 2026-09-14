@@ -29,7 +29,7 @@ export function SelectPageModal() {
     <Fragment>
       <button
         type="button"
-        className="inline-flex w-full min-w-[4rem] max-w-[10rem] cursor-pointer select-none items-center justify-center px-2 py-3 text-sm text-zinc-100"
+        className="inline-flex w-full min-w-[4rem] max-w-[10rem] cursor-pointer select-none items-center justify-center px-2 py-3 text-sm text-ink"
         onClick={handleOpen}
       >
         {page} / {totalPage}
@@ -46,7 +46,7 @@ export function SelectPageModal() {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-lucide-800/70" />
+              <Dialog.Overlay className="fixed inset-0 bg-rail/70" />
             </Transition.Child>
             <span className="inline-block h-screen align-middle" aria-hidden="true" />
             <Transition.Child
@@ -58,8 +58,8 @@ export function SelectPageModal() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-lucide-600 p-6 text-left align-middle shadow-xl transition-all">
-                <Dialog.Title as="div" className="flex items-center justify-between text-zinc-100">
+              <div className="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-2xl bg-sidebar p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title as="div" className="flex items-center justify-between text-ink">
                   <span className="text-xl font-medium leading-6"> Page Selector</span>
                   <X onClick={handleClose} className="cursor-pointer" />
                 </Dialog.Title>
@@ -70,7 +70,7 @@ export function SelectPageModal() {
                   <p>There is 25 images in this category and a maximum of 25 images per page.</p>
                   <div className="m-auto mt-6 flex w-60 items-center gap-2">
                     <button
-                      className="cursor-pointer rounded-md bg-white p-2 text-lucide-800 hover:bg-gray-500 disabled:bg-gray-500"
+                      className="cursor-pointer rounded-md bg-white p-2 text-rail hover:bg-line-2 disabled:bg-line-2"
                       onClick={handleMinus}
                       disabled={inputPage === 1}
                     >
@@ -78,13 +78,13 @@ export function SelectPageModal() {
                     </button>
                     <input
                       type="number"
-                      className="w-full select-none rounded-md border-2 border-white bg-lucide-600 p-2 text-center text-zinc-100 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      className="w-full select-none rounded-md border-2 border-white bg-sidebar p-2 text-center text-ink [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       value={inputPage}
                       onChange={(e) => setInputPage(parseInt(e.target.value, 10))}
                       readOnly
                     />
                     <button
-                      className="cursor-pointer rounded-md bg-white p-2 text-lucide-800 hover:bg-gray-500 disabled:bg-gray-500"
+                      className="cursor-pointer rounded-md bg-white p-2 text-rail hover:bg-line-2 disabled:bg-line-2"
                       onClick={handlePlus}
                       disabled={inputPage === totalPage}
                     >
@@ -96,14 +96,14 @@ export function SelectPageModal() {
                 <div className="mt-4 flex flex-row-reverse gap-3">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-violet-400 px-4 py-2 text-sm text-zinc-100 duration-300 hover:bg-violet-500"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-accent px-4 py-2 text-sm text-ink duration-300 hover:bg-accent-deep"
                     onClick={handleGoToPage}
                   >
                     Go To Page
                   </button>
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm text-zinc-100 duration-300 hover:bg-gray-600"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-line-2 px-4 py-2 text-sm text-ink duration-300 hover:bg-line"
                     onClick={handleClose}
                   >
                     Close

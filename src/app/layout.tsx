@@ -34,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps) {
       <head>
         <Analytics />
       </head>
-      <body className="bg-lucide-600 text-zinc-100 antialiased">
+      <body className="bg-sidebar text-ink antialiased">
         <Providers>
           <Header />
           <SideNavbar />

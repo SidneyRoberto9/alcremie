@@ -25,11 +25,11 @@ export function Hero() {
 
   return (
     <div className="relative mt-16 h-[95vh] w-full overflow-hidden">
-      <div className="absolute left-0 top-0 h-screen w-screen bg-lucide-800/80" />
+      <div className="absolute left-0 top-0 h-screen w-screen bg-rail/80" />
       <div className="absolute left-1/2 top-1/2 mt-8 -translate-x-1/2 -translate-y-1/2 transform">
-        <div className="text-center text-zinc-200">
+        <div className="text-center text-ink">
           <div className={eczar.className}>
-            <h1 className="text-5xl font-bold uppercase text-violet-300 sm:text-9xl">Alcremie</h1>
+            <h1 className="text-5xl font-bold uppercase text-accent-soft sm:text-9xl">Alcremie</h1>
           </div>
 
           <div className="flex h-full w-full flex-col gap-4">

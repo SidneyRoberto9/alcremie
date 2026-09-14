@@ -39,11 +39,11 @@ export function UploadArea() {
         onDragOver={handleDragOver}
         onDrop={handleOnDropFile}
         htmlFor="image"
-        className="flex w-full cursor-pointer select-none flex-col items-center justify-center gap-0.5 rounded-md border-2 border-lucide-800 bg-lucide-800 py-6"
+        className="flex w-full cursor-pointer select-none flex-col items-center justify-center gap-0.5 rounded-md border-2 border-rail bg-rail py-6"
       >
-        <Upload size={20} className="m-2 text-zinc-50" />
-        <span className="text-zinc-5 text-md">Drop Images here</span>
-        <span className="text-xs text-zinc-400">Accept only images</span>
+        <Upload size={20} className="m-2 text-ink" />
+        <span className="text-md text-ink">Drop Images here</span>
+        <span className="text-xs text-ink-2">Accept only images</span>
         <input type="file" id="image" accept="image/*" className="hidden" multiple onChange={handleChangeFileInput} />
       </label>
     </div>

@@ -16,12 +16,12 @@ export function SideNavbar() {
     <Fragment>
       <button
         onClick={toggleDrawer}
-        className="group peer fixed left-2 top-2 z-20 inline-flex items-center justify-center rounded-md px-2 py-1 text-lucide-300 hover:bg-lucide-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-lucide-300"
+        className="group peer fixed left-2 top-2 z-20 inline-flex items-center justify-center rounded-md px-2 py-1 text-line-2 hover:bg-rail focus:outline-none focus:ring-2 focus:ring-inset focus:ring-line-2"
       >
         <Menu size={36} />
       </button>
       <Drawer open={isOpen} onClose={toggleDrawer} direction="left">
-        <div className="relative h-full w-full bg-lucide-600">
+        <div className="relative h-full w-full bg-sidebar">
           <X onClick={toggleDrawer} size={20} className="absolute right-2 top-2 cursor-pointer" />
 
           <div className="pt-14" />
