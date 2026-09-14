@@ -9,9 +9,7 @@ import type { ReactNode } from "react"
 import { ToastContainer } from "react-toastify"
 
 import { Analytics } from "@/components/Analytics"
-import { Header } from "@/components/Header"
 import { Providers } from "@/components/Providers"
-import { SideNavbar } from "@/components/sideNav/SideNavbar"
 import Favicon from "../../public/favicon.ico"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-sans" })
@@ -36,8 +34,6 @@ export default function RootLayout({ children }: LayoutProps) {
       </head>
       <body className="bg-sidebar text-ink antialiased">
         <Providers>
-          <Header />
-          <SideNavbar />
           {children}
           <ToastContainer />
         </Providers>
