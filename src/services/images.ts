@@ -14,6 +14,13 @@ const FEED_COLUMNS = {
   createdAt: images.createdAt,
 }
 
+// Desempate do cursor: usado tanto pelo feed quanto pela galeria por tag, uma
+// só vez, para as duas rotas nunca poderem divergir no critério de corte.
+const cursorCondition = (cursor: Cursor | undefined) =>
+  cursor
+    ? or(lt(images.createdAt, cursor.createdAt), and(eq(images.createdAt, cursor.createdAt), lt(images.id, cursor.id)))
+    : undefined
+
 /**
  * Feed do /recent. Cursor em vez de OFFSET: o custo é o mesmo na página 1 e
  * na página 400, porque o índice images_feed_idx é percorrido a partir da
@@ -26,17 +33,7 @@ export const fetchImageFeed = async (opts: { nsfw: boolean; limit?: number; curs
   const rows = await db
     .select(FEED_COLUMNS)
     .from(images)
-    .where(
-      and(
-        eq(images.isNsfw, opts.nsfw),
-        cursor
-          ? or(
-              lt(images.createdAt, cursor.createdAt),
-              and(eq(images.createdAt, cursor.createdAt), lt(images.id, cursor.id))
-            )
-          : undefined
-      )
-    )
+    .where(and(eq(images.isNsfw, opts.nsfw), cursorCondition(cursor)))
     .orderBy(desc(images.createdAt), desc(images.id))
     .limit(limit + 1)
 
@@ -94,18 +91,7 @@ export const fetchImagesByTag = async (opts: {
     .select(FEED_COLUMNS)
     .from(imageTags)
     .innerJoin(images, eq(images.id, imageTags.imageId))
-    .where(
-      and(
-        eq(imageTags.tagId, opts.tagId),
-        eq(images.isNsfw, opts.nsfw),
-        cursor
-          ? or(
-              lt(images.createdAt, cursor.createdAt),
-              and(eq(images.createdAt, cursor.createdAt), lt(images.id, cursor.id))
-            )
-          : undefined
-      )
-    )
+    .where(and(eq(imageTags.tagId, opts.tagId), eq(images.isNsfw, opts.nsfw), cursorCondition(cursor)))
     .orderBy(desc(images.createdAt), desc(images.id))
     .limit(limit + 1)
 
