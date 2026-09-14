@@ -1,7 +1,7 @@
 import Link from "next/link"
 
 import { Box } from "@/components/Box"
-export default function page() {
+export default function Page() {
   return (
     <Box>
       <div className="flex h-full items-center justify-center">
