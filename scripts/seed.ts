@@ -53,7 +53,9 @@ const main = async () => {
 
     const id = await createImageWithTags(
       {
-        contentHash: createHash("sha256").update(webp).digest("hex"),
+        // Hash do binário submetido, não do derivado: dedup não pode depender
+        // de sharp/libwebp produzirem a mesma saída entre versões.
+        contentHash: createHash("sha256").update(original).digest("hex"),
         // Sem Cloudinary no seed: o id aponta para um arquivo servido de /public.
         cloudinaryId: `seed/${stem}`,
         cloudinaryVersion: 1,
