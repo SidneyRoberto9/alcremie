@@ -1,17 +1,22 @@
 import type { DefaultSession } from "next-auth"
+import type { userRole } from "@/db/schema"
+
+// Deriva do enum do schema em vez de repetir a lista de valores — um `import
+// type` é erasado na compilação e nunca puxa o driver `postgres` para cá.
+type Role = (typeof userRole.enumValues)[number]
 
 // Aumenta os tipos da lib para carregar o nosso `role` (enum user_role do
 // schema) através do token JWT até a sessão — sem isso o campo existiria em
 // runtime (colocado pelos callbacks em auth.ts) mas não no tipo.
 declare module "next-auth" {
   interface User {
-    role?: "default" | "admin"
+    role?: Role
   }
 
   interface Session {
     user: {
       id: string
-      role: "default" | "admin"
+      role: Role
     } & DefaultSession["user"]
   }
 }
@@ -22,6 +27,6 @@ declare module "next-auth" {
 // unknown>` da interface base venceria).
 declare module "@auth/core/jwt" {
   interface JWT {
-    role?: "default" | "admin"
+    role?: Role
   }
 }
