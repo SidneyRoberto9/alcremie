@@ -1,29 +1,29 @@
-import '@/styles/globals.css';
-import 'react-modern-drawer/dist/index.css';
-import 'react-photo-view/dist/react-photo-view.css';
-import 'react-toastify/dist/ReactToastify.css';
+import "@/styles/globals.css"
+import "react-modern-drawer/dist/index.css"
+import "react-photo-view/dist/react-photo-view.css"
+import "react-toastify/dist/ReactToastify.css"
 
-import { Roboto } from 'next/font/google';
-import { ReactNode } from 'react';
-import { ToastContainer } from 'react-toastify';
-import Favicon from '/public/favicon.ico';
+import type { Metadata } from "next"
+import { Roboto } from "next/font/google"
+import type { ReactNode } from "react"
+import { ToastContainer } from "react-toastify"
 
-import { Analytics } from '@/component/Analytics';
-import { Header } from '@/component/Header';
-import { Providers } from '@/component/Providers';
-import { SideNavbar } from '@/component/sideNav/SideNavbar';
+import { Analytics } from "@/components/Analytics"
+import { Header } from "@/components/Header"
+import { Providers } from "@/components/Providers"
+import { SideNavbar } from "@/components/sideNav/SideNavbar"
+import Favicon from "../../public/favicon.ico"
 
-import type { Metadata } from 'next';
-const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'] });
+const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] })
 
 export const metadata: Metadata = {
-  title: 'Home | Alcremie',
-  description: 'The Anime Image API',
-  icons: [{ rel: 'icon', url: Favicon.src }],
-};
+  title: "Home | Alcremie",
+  description: "The Anime Image API",
+  icons: [{ rel: "icon", url: Favicon.src }],
+}
 
 export interface LayoutProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export default function RootLayout({ children }: LayoutProps) {
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps) {
       <head>
         <Analytics />
       </head>
-      <body className="antialiased bg-lucide-600 text-zinc-100">
+      <body className="bg-lucide-600 text-zinc-100 antialiased">
         <Providers>
           <Header />
           <SideNavbar />
@@ -41,5 +41,5 @@ export default function RootLayout({ children }: LayoutProps) {
         </Providers>
       </body>
     </html>
-  );
+  )
 }
