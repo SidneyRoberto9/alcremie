@@ -7,21 +7,22 @@ import { useTagSearch } from "@/hooks/gallery/use-tag-search"
 
 interface TagFilterProps {
   selected: { id: string; name: string } | null
+  basePath: string
 }
 
-export const TagFilter = ({ selected }: TagFilterProps) => {
+export const TagFilter = ({ selected, basePath }: TagFilterProps) => {
   const router = useRouter()
   const [query, setQuery] = useState("")
   const [open, setOpen] = useState(false)
   const { data: results } = useTagSearch(query)
 
   const pick = (tagId: string) => {
-    router.push(`/gallery?tag=${tagId}`)
+    router.push(`${basePath}?tag=${tagId}`)
     setQuery("")
     setOpen(false)
   }
 
-  const clear = () => router.push("/gallery")
+  const clear = () => router.push(basePath)
 
   return (
     <div className="flex h-14 flex-none flex-wrap items-center gap-2.5 border-b border-line px-6 py-2">

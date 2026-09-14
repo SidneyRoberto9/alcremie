@@ -27,11 +27,13 @@ const Page = async ({ searchParams }: PageProps) => {
   return (
     <>
       <Topbar icon={ImageIcon} title="Gallery" />
-      <TagFilter selected={selectedTag} />
+      <TagFilter selected={selectedTag} basePath="/gallery" />
       <div className="grow px-6 py-4">
         <Masonry images={result.data} columns={5} />
       </div>
-      {"totalPage" in result ? <Pagination page={page} totalPage={result.totalPage} tag={tag} /> : null}
+      {"totalPage" in result ? (
+        <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/gallery" />
+      ) : null}
     </>
   )
 }

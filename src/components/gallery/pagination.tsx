@@ -4,11 +4,12 @@ import { cn } from "@/lib/cn"
 interface PaginationProps {
   page: number
   totalPage: number
+  basePath: string
   tag?: string
 }
 
-export const Pagination = ({ page, totalPage, tag }: PaginationProps) => {
-  const href = (n: number) => ({ pathname: "/gallery", query: { page: n, ...(tag ? { tag } : {}) } })
+export const Pagination = ({ page, totalPage, basePath, tag }: PaginationProps) => {
+  const href = (n: number) => ({ pathname: basePath, query: { page: n, ...(tag ? { tag } : {}) } })
   const around = [page - 2, page - 1, page, page + 1, page + 2].filter((n) => n >= 1 && n <= totalPage)
 
   return (
