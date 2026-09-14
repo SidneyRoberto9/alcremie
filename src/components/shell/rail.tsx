@@ -6,14 +6,26 @@ import { isActiveRoute } from "@/components/shell/nav-item"
 import { RAIL_ITEMS } from "@/constant/navigation"
 import { cn } from "@/lib/cn"
 
-export const Rail = () => {
+interface RailProps {
+  isSidebarOpen: boolean
+  onToggleSidebar: () => void
+}
+
+export const Rail = ({ isSidebarOpen, onToggleSidebar }: RailProps) => {
   const pathname = usePathname()
 
   return (
     <div data-probe="rail" className="flex w-[72px] flex-none flex-col items-center gap-2 bg-rail py-3">
-      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent font-display text-[22px] font-bold text-rail">
+      <button
+        type="button"
+        onClick={onToggleSidebar}
+        aria-expanded={isSidebarOpen}
+        aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+        data-probe="rail-logo"
+        className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent font-display text-[22px] font-bold text-rail"
+      >
         A
-      </div>
+      </button>
       <div className="my-1 h-0.5 w-8 rounded-sm bg-line" />
       {RAIL_ITEMS.map((item) => {
         const isActive = isActiveRoute(pathname, item.href)
