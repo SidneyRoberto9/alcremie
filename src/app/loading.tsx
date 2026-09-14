@@ -1,5 +1,5 @@
-import { LoadingPage } from '@/component/LoadingPage';
+import { LoadingPage } from "@/components/LoadingPage"
 
 export default function Loading() {
-  return <LoadingPage />;
+  return <LoadingPage />
 }

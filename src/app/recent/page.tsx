@@ -1,10 +1,9 @@
-import { Box } from '@/component/Box';
-import { InfiniteFetch } from '@/component/recent/InfiniteFetch';
-
+import { Box } from "@/components/Box"
+import { InfiniteFetch } from "@/components/recent/InfiniteFetch"
 export default function page() {
   return (
     <Box>
       <InfiniteFetch />
     </Box>
-  );
+  )
 }

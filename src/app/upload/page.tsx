@@ -1,14 +1,13 @@
-import { Box } from '@/component/Box';
-import { FilesView } from '@/component/upload/FilesView';
-import { Send } from '@/component/upload/Send';
-import { UploadArea } from '@/component/upload/UploadArea';
-
+import { Box } from "@/components/Box"
+import { FilesView } from "@/components/upload/FilesView"
+import { Send } from "@/components/upload/Send"
+import { UploadArea } from "@/components/upload/UploadArea"
 export default function page() {
   return (
-    <Box className="max-w-7xl m-auto mt-10">
+    <Box className="m-auto mt-10 max-w-7xl">
       <UploadArea />
       <FilesView />
       <Send />
     </Box>
-  );
+  )
 }
