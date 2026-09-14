@@ -34,7 +34,7 @@ const Page = async ({ searchParams }: PageProps) => {
           Age-restricted mode. Verified for this session — expires when you sign out.
         </span>
         <div className="grow" />
-        <span className="font-mono text-[11px] text-warn/80">nsfw=true</span>
+        <span className="font-mono text-xs text-warn/80 sm:text-[11px]">nsfw=true</span>
       </div>
       <TagFilter selected={selectedTag} basePath="/nsfw" />
       <div className="grow px-6 py-4">
