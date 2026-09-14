@@ -65,9 +65,8 @@ export const images = pgTable(
 
     // Mantém o nome e a semântica antigos para as queries não precisarem
     // mudar, mas agora derivado do rating em vez de gravado à mão.
-    isNsfw: boolean("is_nsfw")
-      .notNull()
-      .generatedAlwaysAs(sql`(rating <> 'general')`),
+    // prettier-ignore
+    isNsfw: boolean("is_nsfw").notNull().generatedAlwaysAs(sql`(rating <> 'general')`),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
