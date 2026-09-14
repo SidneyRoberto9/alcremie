@@ -1,5 +1,6 @@
 import { House, Image as ImageIcon, Server, Tag } from "lucide-react"
 import type { Metadata } from "next"
+import { Fragment } from "react"
 import { Hero } from "@/components/home/hero"
 import { RandomPanel } from "@/components/home/random-panel"
 import { StatTile } from "@/components/home/stat-tile"
@@ -19,7 +20,7 @@ const Page = async () => {
   ])
 
   return (
-    <>
+    <Fragment>
       <Topbar icon={House} title="Home" right={<ApiStatus />} />
       <Hero images={backdrop.data} />
       <div className="flex flex-col gap-5 p-6">
@@ -30,7 +31,7 @@ const Page = async () => {
         </div>
         {random ? <RandomPanel image={random} /> : null}
       </div>
-    </>
+    </Fragment>
   )
 }
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { Fragment } from "react"
 import { NavItem } from "@/components/shell/nav-item"
 import { NAV_ITEMS } from "@/constant/navigation"
 
@@ -9,12 +10,12 @@ interface SectionProps {
 }
 
 const Section = ({ label, section }: SectionProps) => (
-  <>
+  <Fragment>
     <div className="px-2 pb-2 pt-5 font-mono text-[10px] tracking-[0.12em] text-ink-3 first:pt-0">{label}</div>
     {NAV_ITEMS.filter((item) => item.section === section).map((item) => (
       <NavItem key={item.href} href={item.href} title={item.title} icon={item.icon} />
     ))}
-  </>
+  </Fragment>
 )
 
 export const Sidebar = () => (

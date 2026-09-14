@@ -1,7 +1,7 @@
 "use client"
 
 import { Menu, X } from "lucide-react"
-import { useRef } from "react"
+import { Fragment, useRef } from "react"
 import { NavItem } from "@/components/shell/nav-item"
 import { NAV_ITEMS } from "@/constant/navigation"
 
@@ -9,7 +9,7 @@ export const MobileNav = () => {
   const dialogRef = useRef<HTMLDialogElement>(null)
 
   return (
-    <>
+    <Fragment>
       <button
         type="button"
         onClick={() => dialogRef.current?.showModal()}
@@ -47,6 +47,6 @@ export const MobileNav = () => {
           ))}
         </nav>
       </dialog>
-    </>
+    </Fragment>
   )
 }

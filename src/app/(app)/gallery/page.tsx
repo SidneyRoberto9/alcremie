@@ -1,5 +1,6 @@
 import { Image as ImageIcon } from "lucide-react"
 import type { Metadata } from "next"
+import { Fragment } from "react"
 import { z } from "zod"
 import { Pagination } from "@/components/gallery/pagination"
 import { TagFilter } from "@/components/gallery/tag-filter"
@@ -25,7 +26,7 @@ const Page = async ({ searchParams }: PageProps) => {
   ])
 
   return (
-    <>
+    <Fragment>
       <Topbar icon={ImageIcon} title="Gallery" />
       <TagFilter selected={selectedTag} basePath="/gallery" />
       <div className="grow px-6 py-4">
@@ -34,7 +35,7 @@ const Page = async ({ searchParams }: PageProps) => {
       {"totalPage" in result ? (
         <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/gallery" />
       ) : null}
-    </>
+    </Fragment>
   )
 }
 

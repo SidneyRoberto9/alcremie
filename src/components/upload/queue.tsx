@@ -1,5 +1,6 @@
 "use client"
 
+import { Fragment } from "react"
 import { QueueRow } from "@/components/upload/queue-row"
 import type { QueueItem } from "@/hooks/upload/use-upload-queue"
 import { formatBytes } from "@/utils/format-bytes"
@@ -15,7 +16,7 @@ export const Queue = ({ items, onRemove, onSend, sending }: QueueProps) => {
   const totalBytes = items.reduce((sum, item) => sum + item.file.size, 0)
 
   return (
-    <>
+    <Fragment>
       <div className="flex items-center gap-2.5">
         <span className="font-mono text-[11px] tracking-[0.1em] text-ink-3">QUEUE · {items.length}</span>
         <div className="h-px grow bg-line" />
@@ -45,6 +46,6 @@ export const Queue = ({ items, onRemove, onSend, sending }: QueueProps) => {
           Publish {items.length} image{items.length === 1 ? "" : "s"}
         </button>
       </div>
-    </>
+    </Fragment>
   )
 }
