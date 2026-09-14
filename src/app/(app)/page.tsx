@@ -1,50 +1,37 @@
-import { Image as IMG, Server, Tag } from "lucide-react"
-import { Fragment } from "react"
-import { Hero } from "@/components/home/Hero"
-import { Icon as StatusIcon } from "@/components/home/status/Icon"
-import { Image as StatusImage } from "@/components/home/status/Image"
-import { Item as StatusItem } from "@/components/home/status/Item"
-import { ItemList as StatusItemList } from "@/components/home/status/ItemList"
-import { Root as StatusRoot } from "@/components/home/status/Root"
-import { api } from "@/lib/axios"
-import type { Image, StatusResponse } from "@/types/Image"
-export const dynamic = "force-dynamic"
+import { House, Image as ImageIcon, Server, Tag } from "lucide-react"
+import type { Metadata } from "next"
+import { Hero } from "@/components/home/hero"
+import { RandomPanel } from "@/components/home/random-panel"
+import { StatTile } from "@/components/home/stat-tile"
+import { ApiStatus } from "@/components/shell/api-status"
+import { Topbar } from "@/components/shell/topbar"
+import { fetchImageFeed, randomImage } from "@/services/images"
+import { getStatistics } from "@/services/stats"
 
-async function getData() {
-  const [responseStatus, responseRandomImage] = await Promise.all([
-    api.get<StatusResponse>("status"),
-    api.get<Image>("random-image"),
+export const metadata: Metadata = { title: "Home | Alcremie" }
+export const revalidate = 60
+
+const Page = async () => {
+  const [stats, random, backdrop] = await Promise.all([
+    getStatistics(),
+    randomImage(false),
+    fetchImageFeed({ nsfw: false, limit: 14 }),
   ])
 
-  return {
-    status: responseStatus.data.statistics,
-    randomImage: responseRandomImage.data,
-  }
-}
-
-export default async function Page() {
-  const {
-    randomImage,
-    status: { image, tag, request },
-  } = await getData()
-
   return (
-    <Fragment>
-      <Hero />
-      <StatusRoot>
-        <StatusImage data={randomImage} />
-        <StatusItemList>
-          <StatusItem value={tag} title={"Tags"}>
-            <StatusIcon icon={Tag} />
-          </StatusItem>
-          <StatusItem value={image} title={"Images"}>
-            <StatusIcon icon={IMG} />
-          </StatusItem>
-          <StatusItem value={request} title={"Requests"}>
-            <StatusIcon icon={Server} />
-          </StatusItem>
-        </StatusItemList>
-      </StatusRoot>
-    </Fragment>
+    <>
+      <Topbar icon={House} title="Home" right={<ApiStatus />} />
+      <Hero images={backdrop.data} />
+      <div className="flex flex-col gap-5 p-6">
+        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-3">
+          <StatTile icon={ImageIcon} value={stats.images} label="IMAGES" />
+          <StatTile icon={Tag} value={stats.tags} label="TAGS" />
+          <StatTile icon={Server} value={stats.requests} label="REQUESTS" />
+        </div>
+        {random ? <RandomPanel image={random} /> : null}
+      </div>
+    </>
   )
 }
+
+export default Page
