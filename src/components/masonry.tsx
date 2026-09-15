@@ -30,7 +30,7 @@ export const Masonry = ({ images, columns = 5 }: MasonryProps) => {
           {bucket.map((image) => (
             <NextImage
               key={image.id}
-              src={cloudinaryUrl(image, 400)}
+              src={cloudinaryUrl(image)}
               alt=""
               width={image.width}
               height={image.height}

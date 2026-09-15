@@ -5,14 +5,18 @@ interface Transformable {
   cloudinaryVersion: number
 }
 
+// URL de entrega sem transformação nenhuma: quem escolhe a largura é o
+// cloudinary-loader, chamado uma vez por entrada do srcset que o next/image
+// monta. Fixar w_ aqui dava uma fonte só — em tela retina o navegador esticava
+// os 400px para 800 e a listagem saía borrada.
+//
 // O seed local grava webp em public/seed/ com cloudinaryId "seed/<nome>" — esses
 // arquivos nunca existiram no Cloudinary, então montar a URL remota para eles
-// quebraria toda imagem em dev. O branch de produção usa https e a versão,
-// corrigindo a URL http:// que cloudinary.service.ts gravava.
-export const cloudinaryUrl = (image: Transformable, width: number) => {
+// quebraria toda imagem em dev.
+export const cloudinaryUrl = (image: Transformable) => {
   if (image.cloudinaryId.startsWith("seed/")) {
     return `/${image.cloudinaryId}.webp`
   }
 
-  return `https://res.cloudinary.com/${CLOUD}/image/upload/w_${width},f_auto,q_auto/v${image.cloudinaryVersion}/${image.cloudinaryId}`
+  return `https://res.cloudinary.com/${CLOUD}/image/upload/v${image.cloudinaryVersion}/${image.cloudinaryId}`
 }

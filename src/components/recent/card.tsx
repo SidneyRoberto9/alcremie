@@ -30,7 +30,7 @@ export const Card = ({ image }: CardProps) => (
       <span className="font-mono text-xs text-ink-3">{timeAgo(image.createdAt)}</span>
     </div>
     <NextImage
-      src={cloudinaryUrl(image, 720)}
+      src={cloudinaryUrl(image)}
       alt=""
       width={image.width}
       height={image.height}

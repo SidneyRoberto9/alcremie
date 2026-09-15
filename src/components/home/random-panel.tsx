@@ -18,7 +18,7 @@ export const RandomPanel = ({ image }: RandomPanelProps) => (
   <div className="grid grid-cols-1 items-start gap-5 md:grid-cols-[360px_minmax(0,1fr)]">
     <div className="flex flex-col gap-3 rounded-xl border border-line bg-raise p-3">
       <NextImage
-        src={cloudinaryUrl(image, 720)}
+        src={cloudinaryUrl(image)}
         alt="Imagem sorteada pela API"
         width={image.width}
         height={image.height}

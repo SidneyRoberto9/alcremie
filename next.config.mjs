@@ -14,8 +14,12 @@ const nextConfig = {
   outputFileTracingExcludes: {
     "/**": ["./node_modules/@img/sharp-libvips-linuxmusl-x64/**", "./node_modules/@img/sharp-linuxmusl-x64/**"],
   },
+  // O Cloudinary entrega as imagens direto ao navegador, redimensionadas por
+  // entrada do srcset. Sem isso o /_next/image recomprimia o que já vinha
+  // comprimido e a listagem perdia detalhe duas vezes.
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+    loader: "custom",
+    loaderFile: "./src/utils/cloudinary-loader.ts",
   },
   // Next otherwise overwrites the repo's own CLAUDE.md with an
   // auto-generated agent-rules file on every `next dev`.
