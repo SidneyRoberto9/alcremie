@@ -279,6 +279,13 @@ export const randomImage = async (nsfw = false) => {
   return rows[0] ?? null
 }
 
+/** Mesmo sorteio, em lote — o mosaico de fundo do login. */
+export const randomImages = async (count: number, nsfw = false) => {
+  const random = sql`random()`
+
+  return db.select(FEED_COLUMNS).from(images).where(eq(images.isNsfw, nsfw)).orderBy(random).limit(count)
+}
+
 /**
  * Grava a imagem e todas as tags do modelo numa transação, sem laço por tag:
  * um INSERT para as tags novas, um para a junção. Substitui as ~60 queries
