@@ -1,0 +1,22 @@
+node_modules
+.next
+.git
+.github
+.husky
+.vitest
+.superpowers
+docs
+tests
+fixtures
+coverage
+# Fetched in the model stage instead, so local builds match Coolify's clean clone.
+models
+scripts/*
+!scripts/fetch-model.sh
+.env
+.env.*
+*.tsbuildinfo
+npm-debug.log*
+Dockerfile
+.dockerignore
+README.md
