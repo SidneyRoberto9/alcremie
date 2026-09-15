@@ -14,7 +14,7 @@ const Page = () => {
   return (
     <Fragment>
       <Topbar icon={Upload} title="Upload" right={<ApiStatus />} />
-      <div className="grow overflow-hidden p-6">
+      <div className="grow p-6">
         <div className="mx-auto flex max-w-[840px] flex-col gap-[18px]">
           <Dropzone onFiles={add} />
           {items.length > 0 ? <Queue items={items} onRemove={remove} onSend={send} sending={sending} /> : null}
