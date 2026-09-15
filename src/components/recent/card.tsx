@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react"
 import NextImage from "next/image"
+import Link from "next/link"
 import type { FeedImageWithTags } from "@/types/image"
 import { cloudinaryUrl } from "@/utils/cloudinary-url"
 
@@ -29,14 +30,16 @@ export const Card = ({ image }: CardProps) => (
       <div className="grow" />
       <span className="font-mono text-xs text-ink-3">{timeAgo(image.createdAt)}</span>
     </div>
-    <NextImage
-      src={cloudinaryUrl(image)}
-      alt=""
-      width={image.width}
-      height={image.height}
-      sizes="(max-width: 640px) 100vw, 620px"
-      className="block w-full"
-    />
+    <Link href={`/images/${image.id}`}>
+      <NextImage
+        src={cloudinaryUrl(image)}
+        alt=""
+        width={image.width}
+        height={image.height}
+        sizes="(max-width: 640px) 100vw, 620px"
+        className="block w-full"
+      />
+    </Link>
     {image.tags.length > 0 ? (
       <div className="flex flex-wrap gap-1.5 px-3.5 py-3">
         {image.tags.map((tag) => (

@@ -41,7 +41,7 @@ const Page = async ({ searchParams }: PageProps) => {
         </div>
         <TagFilter selected={selectedTag} basePath="/nsfw" />
         <div className="grow px-6 py-4">
-          <Masonry images={result.data} columns={5} />
+          <Masonry images={result.data} columns={5} linked />
         </div>
         {"totalPage" in result ? (
           <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/nsfw" />
