@@ -22,6 +22,11 @@ vi.mock("cloudinary", () => ({
   },
 }))
 
+// revalidatePath exige o store de request do Next, que não existe chamando a
+// server action direto daqui. O que importa testar é o upload, não o purge do
+// cache.
+vi.mock("next/cache", () => ({ revalidatePath: () => {} }))
+
 const fileFrom = (buffer: Buffer, name: string) => {
   const formData = new FormData()
   formData.append("file", new File([buffer as unknown as BlobPart], name, { type: "image/jpeg" }))
