@@ -18,6 +18,8 @@ export interface QueueItem {
 
 const nextId = (file: File) => `${file.name}-${file.size}-${file.lastModified}-${Math.random().toString(36).slice(2)}`
 
+const UPLOAD_CONCURRENCY = 3
+
 export const useUploadQueue = () => {
   const [items, setItems] = useState<QueueItem[]>([])
   const [sending, setSending] = useState(false)
@@ -34,41 +36,48 @@ export const useUploadQueue = () => {
     setItems((previous) => previous.filter((row) => row.id !== id))
   }
 
-  // Serial de propósito: cada arquivo carrega o modelo ONNX no servidor e
-  // paralelizar multiplicaria a memória. Um erro num arquivo não derruba os
-  // outros — cada resultado é aplicado à linha correspondente, o laço segue.
+  // Até 3 uploads concorrentes: a sessão ONNX é um singleton reusado
+  // (services/tagger.ts), o custo por upload em voo é CPU/memória de
+  // inferência, não reload de modelo — um pool pequeno evita saturar o
+  // servidor sem serializar tudo. Um erro num arquivo não derruba os
+  // outros — cada resultado é aplicado à linha correspondente.
   const send = async () => {
     setSending(true)
     let done = 0
     let failed = 0
 
-    for (const item of items) {
-      if (item.state === "done") {
-        continue
-      }
+    const queue = items.filter((item) => item.state !== "done")
+    let cursor = 0
 
-      setItems((previous) => previous.map((row) => (row.id === item.id ? { ...row, state: "running" } : row)))
+    const worker = async () => {
+      while (cursor < queue.length) {
+        const item = queue[cursor++]
 
-      const formData = new FormData()
-      formData.append("file", item.file)
-      const result = await uploadOne(formData)
+        setItems((previous) => previous.map((row) => (row.id === item.id ? { ...row, state: "running" } : row)))
 
-      if (result.ok) {
-        done++
-      } else {
-        failed++
-      }
+        const formData = new FormData()
+        formData.append("file", item.file)
+        const result = await uploadOne(formData)
 
-      setItems((previous) =>
-        previous.map((row) =>
-          row.id === item.id
-            ? result.ok
-              ? { ...row, state: "done" as const, tags: result.data.tags }
-              : { ...row, state: "error" as const, message: result.error }
-            : row
+        if (result.ok) {
+          done++
+        } else {
+          failed++
+        }
+
+        setItems((previous) =>
+          previous.map((row) =>
+            row.id === item.id
+              ? result.ok
+                ? { ...row, state: "done" as const, tags: result.data.tags }
+                : { ...row, state: "error" as const, message: result.error }
+              : row
+          )
         )
-      )
+      }
     }
+
+    await Promise.all(Array.from({ length: Math.min(UPLOAD_CONCURRENCY, queue.length) }, worker))
 
     setSending(false)
 

@@ -11,9 +11,10 @@ const MAX_BYTES = 8 * 1024 * 1024
 
 type UploadResult = { ok: true; data: { id: string; rating: string; tags: string[] } } | { ok: false; error: string }
 
-// Um arquivo por chamada: cada uma carrega o modelo ONNX no servidor, e o
-// cliente (use-upload-queue.ts) controla a serialização — paralelizar aqui
-// multiplicaria a memória do processo por arquivo em voo.
+// Um arquivo por chamada: o cliente (use-upload-queue.ts) controla a
+// concorrência com um pool limitado — a sessão ONNX é reusada
+// (services/tagger.ts), então o limite existe pra CPU/memória de inferência,
+// não pra evitar recarregar o modelo.
 export const uploadOne = async (formData: FormData): Promise<UploadResult> => {
   const file = formData.get("file")
 
