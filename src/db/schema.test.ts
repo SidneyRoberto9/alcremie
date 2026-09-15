@@ -29,6 +29,13 @@ test("is_nsfw é derivado do rating, não gravado", async () => {
     .returning({ isNsfw: images.isNsfw })
 
   expect(safe.isNsfw).toBe(false)
+
+  const [sensitive] = await db
+    .insert(images)
+    .values({ ...base, contentHash: "e".repeat(64), cloudinaryId: "test/sensitive", rating: "sensitive" })
+    .returning({ isNsfw: images.isNsfw })
+
+  expect(sensitive.isNsfw).toBe(false)
 })
 
 test("content_hash duplicado é rejeitado", async () => {

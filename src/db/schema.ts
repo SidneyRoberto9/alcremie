@@ -65,8 +65,13 @@ export const images = pgTable(
 
     // Mantém o nome e a semântica antigos para as queries não precisarem
     // mudar, mas agora derivado do rating em vez de gravado à mão.
+    // sensitive (pose sugestiva, roupa justa) fica fora do corte: o modelo
+    // marca assim qualquer ilustração levemente provocante, e mandar tudo isso
+    // para /nsfw esvaziava a galeria. Duas comparações em vez de
+    // `rating NOT IN (...)`: o IN vira um cast de array que o Postgres recusa
+    // como não-imutável numa coluna gerada.
     // prettier-ignore
-    isNsfw: boolean("is_nsfw").notNull().generatedAlwaysAs(sql`(rating <> 'general')`),
+    isNsfw: boolean("is_nsfw").notNull().generatedAlwaysAs(sql`(rating <> 'general' AND rating <> 'sensitive')`),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
