@@ -16,3 +16,11 @@ export type FeedPage = { data: FeedImage[]; hasNext: boolean; cursor: string | n
 export type FeedImageWithTags = FeedImage & { tags: string[] }
 
 export type TaggedFeedPage = { data: FeedImageWithTags[]; hasNext: boolean; cursor: string | null }
+
+// Usado só pela página de detalhe (/images/[id]) — precisa de bytes/format
+// (tamanho do arquivo), views e isNsfw, que o feed e a galeria nunca mostram.
+export type ImageDetail = FeedImageWithTags & { views: number; bytes: number; format: string; isNsfw: boolean }
+
+// score é o índice de Jaccard (0-100) entre o conjunto de tags desta imagem e
+// o da imagem de referência — ver fetchSimilarImages.
+export type SimilarImage = FeedImage & { score: number }

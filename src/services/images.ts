@@ -1,10 +1,18 @@
-import { and, count, desc, eq, inArray, lt, or, sql } from "drizzle-orm"
+import { and, count, desc, eq, inArray, lt, ne, or, sql } from "drizzle-orm"
 import { db } from "@/db/client"
 import { images, imageTags, tags } from "@/db/schema"
-import type { Cursor, FeedImageWithTags, FeedPage, TaggedFeedPage } from "@/types/image"
+import type { Cursor, FeedPage, ImageDetail, SimilarImage, TaggedFeedPage } from "@/types/image"
 
 // Teto de tags por card do /recent — a prancha mostra 4 a 5, nunca mais.
 const CARD_TAG_LIMIT = 5
+
+// A página de mais vista mostra a nuvem inteira, não o resumo do card.
+const DETAIL_TAG_LIMIT = 100
+
+// Abaixo disso o índice de Jaccard não é confiável o bastante pra "quase
+// idêntica" — pedido explícito: só aparece com no mínimo 98 de 100 pontos.
+const SIMILARITY_THRESHOLD = 98
+const SIMILAR_LIMIT = 6
 
 const FEED_COLUMNS = {
   id: images.id,
@@ -51,6 +59,32 @@ export const fetchImageFeed = async (opts: { nsfw: boolean; limit?: number; curs
   }
 }
 
+// Extraído de fetchImageFeedWithTags para a página de mais vista reusar o
+// mesmo join batelado por IN(...) em vez de repetir a query.
+const loadTagNamesByImage = async (imageIds: string[], limitPerImage: number) => {
+  if (imageIds.length === 0) {
+    return new Map<string, string[]>()
+  }
+
+  const tagRows = await db
+    .select({ imageId: imageTags.imageId, name: tags.name })
+    .from(imageTags)
+    .innerJoin(tags, eq(tags.id, imageTags.tagId))
+    .where(inArray(imageTags.imageId, imageIds))
+    .orderBy(desc(imageTags.score))
+
+  const tagsByImage = new Map<string, string[]>()
+  for (const row of tagRows) {
+    const list = tagsByImage.get(row.imageId) ?? []
+    if (list.length < limitPerImage) {
+      list.push(row.name)
+    }
+    tagsByImage.set(row.imageId, list)
+  }
+
+  return tagsByImage
+}
+
 /**
  * Mesma página do feed, com as tags de cada imagem penduradas (ordenadas por
  * score, capadas em CARD_TAG_LIMIT) — é o que o card do /recent precisa para
@@ -70,30 +104,112 @@ export const fetchImageFeedWithTags = async (opts: {
     return { ...page, data: [] }
   }
 
-  const tagRows = await db
-    .select({ imageId: imageTags.imageId, name: tags.name })
+  const tagsByImage = await loadTagNamesByImage(
+    page.data.map((row) => row.id),
+    CARD_TAG_LIMIT
+  )
+
+  return { ...page, data: page.data.map((row) => ({ ...row, tags: tagsByImage.get(row.id) ?? [] })) }
+}
+
+/**
+ * Página de detalhe (/images/[id]). Sem filtro de nsfw — quem chegou aqui já
+ * escolheu a imagem pelo id, diferente das listagens, que decidem por rating.
+ */
+export const fetchImageById = async (id: string): Promise<ImageDetail | null> => {
+  const [row] = await db
+    .select({ ...FEED_COLUMNS, views: images.views, bytes: images.bytes, format: images.format, isNsfw: images.isNsfw })
+    .from(images)
+    .where(eq(images.id, id))
+    .limit(1)
+
+  if (!row) {
+    return null
+  }
+
+  const tagsByImage = await loadTagNamesByImage([row.id], DETAIL_TAG_LIMIT)
+  return { ...row, tags: tagsByImage.get(row.id) ?? [] }
+}
+
+/** Um UPDATE por abertura da página de detalhe — mesmo padrão do countRequest. */
+export const incrementViews = async (imageId: string) => {
+  await db
+    .update(images)
+    .set({ views: sql`${images.views} + 1` })
+    .where(eq(images.id, imageId))
+}
+
+/**
+ * Similaridade por índice de Jaccard sobre o CONJUNTO de tags (não a
+ * probabilidade do modelo): |interseção| / |união| × 100. Pedido explícito é
+ * um corte em 98, e nesse ponto só imagens com quase todas as tags iguais
+ * passam — comparar por presença/ausência já basta, pesar por score só
+ * complicaria a conta sem mudar quem passa do corte.
+ *
+ * Duas queries batidas por IN(...) (candidatos que compartilham alguma tag,
+ * depois o total de tags de cada candidato), pontuação em JS — mesmo estilo
+ * de fetchImageFeedWithTags, nunca uma query por candidato.
+ */
+export const fetchSimilarImages = async (imageId: string, nsfw: boolean): Promise<SimilarImage[]> => {
+  const targetTags = await db.select({ tagId: imageTags.tagId }).from(imageTags).where(eq(imageTags.imageId, imageId))
+
+  if (targetTags.length === 0) {
+    return []
+  }
+
+  const tagIds = targetTags.map((t) => t.tagId)
+  const targetCount = tagIds.length
+
+  const shared = await db
+    .select({ imageId: imageTags.imageId, shared: count() })
     .from(imageTags)
-    .innerJoin(tags, eq(tags.id, imageTags.tagId))
+    .where(and(inArray(imageTags.tagId, tagIds), ne(imageTags.imageId, imageId)))
+    .groupBy(imageTags.imageId)
+
+  if (shared.length === 0) {
+    return []
+  }
+
+  const totals = await db
+    .select({ imageId: imageTags.imageId, total: count() })
+    .from(imageTags)
     .where(
       inArray(
         imageTags.imageId,
-        page.data.map((row) => row.id)
+        shared.map((row) => row.imageId)
       )
     )
-    .orderBy(desc(imageTags.score))
+    .groupBy(imageTags.imageId)
+  const totalByImage = new Map(totals.map((row) => [row.imageId, row.total]))
 
-  const tagsByImage = new Map<string, string[]>()
-  for (const row of tagRows) {
-    const list = tagsByImage.get(row.imageId) ?? []
-    if (list.length < CARD_TAG_LIMIT) {
-      list.push(row.name)
-    }
-    tagsByImage.set(row.imageId, list)
+  const scored = shared
+    .map((row) => {
+      const union = targetCount + (totalByImage.get(row.imageId) ?? row.shared) - row.shared
+      return { imageId: row.imageId, score: union > 0 ? Math.round((row.shared / union) * 100) : 0 }
+    })
+    .filter((row) => row.score >= SIMILARITY_THRESHOLD)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, SIMILAR_LIMIT)
+
+  if (scored.length === 0) {
+    return []
   }
 
-  const data: FeedImageWithTags[] = page.data.map((row) => ({ ...row, tags: tagsByImage.get(row.id) ?? [] }))
+  const scoreByImage = new Map(scored.map((row) => [row.imageId, row.score]))
+  const rows = await db
+    .select(FEED_COLUMNS)
+    .from(images)
+    .where(
+      and(
+        inArray(
+          images.id,
+          scored.map((row) => row.imageId)
+        ),
+        eq(images.isNsfw, nsfw)
+      )
+    )
 
-  return { ...page, data }
+  return rows.map((row) => ({ ...row, score: scoreByImage.get(row.id) ?? 0 })).sort((a, b) => b.score - a.score)
 }
 
 /**
