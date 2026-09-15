@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { uploadOne } from "@/app/(app)/upload/actions"
 import { toastError } from "@/lib/toast/toast-error"
@@ -20,6 +21,7 @@ const nextId = (file: File) => `${file.name}-${file.size}-${file.lastModified}-$
 export const useUploadQueue = () => {
   const [items, setItems] = useState<QueueItem[]>([])
   const [sending, setSending] = useState(false)
+  const router = useRouter()
 
   const add = (files: File[]) => {
     setItems((previous) => [
@@ -77,6 +79,10 @@ export const useUploadQueue = () => {
 
     if (done > 0) {
       toastSuccess(`${done} imagens publicadas`)
+      // Só sai da tela quando nada falhou: com erro na fila o usuário ainda
+      // precisa ver qual linha quebrou. O uploadOne já revalidou as listagens,
+      // então a galeria abre com as novas imagens.
+      router.push("/gallery")
     }
   }
 
