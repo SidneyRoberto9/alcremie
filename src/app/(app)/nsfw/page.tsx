@@ -5,6 +5,7 @@ import { z } from "zod"
 import { Pagination } from "@/components/gallery/pagination"
 import { TagFilter } from "@/components/gallery/tag-filter"
 import { Masonry } from "@/components/masonry"
+import { AgeGate } from "@/components/nsfw/age-gate"
 import { ApiStatus } from "@/components/shell/api-status"
 import { Topbar } from "@/components/shell/topbar"
 import { fetchImagePage, fetchImagesByTag } from "@/services/images"
@@ -29,21 +30,23 @@ const Page = async ({ searchParams }: PageProps) => {
   return (
     <Fragment>
       <Topbar icon={OctagonAlert} title="NSFW" right={<ApiStatus />} />
-      <div className="flex flex-none items-center gap-2.5 border-b border-warn/[0.22] bg-warn/[0.08] px-6 py-2.5">
-        <Shield size={16} strokeWidth={1.75} className="text-warn" />
-        <span className="text-[13px] text-warn">
-          Age-restricted mode. This section contains content intended for adults.
-        </span>
-        <div className="grow" />
-        <span className="font-mono text-xs text-warn/80 sm:text-[11px]">nsfw=true</span>
-      </div>
-      <TagFilter selected={selectedTag} basePath="/nsfw" />
-      <div className="grow px-6 py-4">
-        <Masonry images={result.data} columns={5} />
-      </div>
-      {"totalPage" in result ? (
-        <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/nsfw" />
-      ) : null}
+      <AgeGate>
+        <div className="flex flex-none items-center gap-2.5 border-b border-warn/[0.22] bg-warn/[0.08] px-6 py-2.5">
+          <Shield size={16} strokeWidth={1.75} className="text-warn" />
+          <span className="text-[13px] text-warn">
+            Age-restricted mode. This section contains content intended for adults.
+          </span>
+          <div className="grow" />
+          <span className="font-mono text-xs text-warn/80 sm:text-[11px]">nsfw=true</span>
+        </div>
+        <TagFilter selected={selectedTag} basePath="/nsfw" />
+        <div className="grow px-6 py-4">
+          <Masonry images={result.data} columns={5} />
+        </div>
+        {"totalPage" in result ? (
+          <Pagination page={page} totalPage={result.totalPage} tag={tag} basePath="/nsfw" />
+        ) : null}
+      </AgeGate>
     </Fragment>
   )
 }
