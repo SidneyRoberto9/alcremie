@@ -287,6 +287,35 @@ export const randomImages = async (count: number, nsfw = false) => {
 }
 
 /**
+ * Apaga a linha e devolve `true` se havia o que apagar. O arquivo no
+ * Cloudinary é problema da action que chama isto — service nenhum aqui abre
+ * conexão com o provedor.
+ */
+export const deleteImageById = async (id: string) =>
+  db.transaction(async (tx) => {
+    // image_tags cai por ON DELETE CASCADE, mas tags.image_count é
+    // denormalizado e não sabe disso: sem este UPDATE a nuvem de tags e o
+    // autocomplete seguem contando imagens que não existem mais.
+    const tagRows = await tx.select({ tagId: imageTags.tagId }).from(imageTags).where(eq(imageTags.imageId, id))
+
+    if (tagRows.length > 0) {
+      await tx
+        .update(tags)
+        .set({ imageCount: sql`greatest(${tags.imageCount} - 1, 0)` })
+        .where(
+          inArray(
+            tags.id,
+            tagRows.map((row) => row.tagId)
+          )
+        )
+    }
+
+    const deleted = await tx.delete(images).where(eq(images.id, id)).returning({ id: images.id })
+
+    return deleted.length > 0
+  })
+
+/**
  * Grava a imagem e todas as tags do modelo numa transação, sem laço por tag:
  * um INSERT para as tags novas, um para a junção. Substitui as ~60 queries
  * sequenciais que o upload faz hoje por arquivo.

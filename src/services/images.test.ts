@@ -2,7 +2,14 @@ import { eq, inArray } from "drizzle-orm"
 import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { db } from "@/db/client"
 import { images, imageTags, tags } from "@/db/schema"
-import { decodeCursor, encodeCursor, fetchImageFeed, fetchImageFeedWithTags, fetchImagesByTag } from "@/services/images"
+import {
+  decodeCursor,
+  deleteImageById,
+  encodeCursor,
+  fetchImageFeed,
+  fetchImageFeedWithTags,
+  fetchImagesByTag,
+} from "@/services/images"
 import type { FeedImage } from "@/types/image"
 
 // cloudinaryId/slug NÃO começam com "test/" nem "test-": o afterAll de
@@ -209,5 +216,60 @@ describe("fetchImageFeedWithTags", () => {
 
     expect(row).toBeDefined()
     expect(row?.tags).toContain(FEED_TAGS_TAG_NAME)
+  })
+})
+
+describe("deleteImageById", () => {
+  const DELETE_HASH = "d0".padEnd(64, "0")
+  const DELETE_TAG_NAME = "svc-test-delete-tag"
+
+  let imageId = ""
+  let tagId = ""
+
+  beforeAll(async () => {
+    const [row] = await db
+      .insert(images)
+      .values({
+        contentHash: DELETE_HASH,
+        cloudinaryId: "svc-test/delete-me",
+        cloudinaryVersion: 1,
+        width: 100,
+        height: 100,
+        bytes: 1,
+        rating: "general" as const,
+      })
+      .returning({ id: images.id })
+    imageId = row.id
+
+    const [tag] = await db
+      .insert(tags)
+      .values({ name: DELETE_TAG_NAME, slug: DELETE_TAG_NAME, imageCount: 3 })
+      .returning({ id: tags.id })
+    tagId = tag.id
+
+    await db.insert(imageTags).values({ imageId, tagId, score: 0.9 })
+  })
+
+  afterAll(async () => {
+    await db.delete(images).where(eq(images.contentHash, DELETE_HASH))
+    await db.delete(tags).where(eq(tags.id, tagId))
+  })
+
+  test("apaga a linha, a junção e desconta o contador denormalizado da tag", async () => {
+    expect(await deleteImageById(imageId)).toBe(true)
+
+    const remaining = await db.select({ id: images.id }).from(images).where(eq(images.id, imageId))
+    expect(remaining).toHaveLength(0)
+
+    const junction = await db.select({ tagId: imageTags.tagId }).from(imageTags).where(eq(imageTags.imageId, imageId))
+    expect(junction).toHaveLength(0)
+
+    // O ponto do teste: image_tags cai por CASCADE sozinho, tags.image_count não.
+    const [tag] = await db.select({ imageCount: tags.imageCount }).from(tags).where(eq(tags.id, tagId))
+    expect(tag.imageCount).toBe(2)
+  })
+
+  test("id inexistente devolve false em vez de estourar", async () => {
+    expect(await deleteImageById("00000000-0000-0000-0000-000000000000")).toBe(false)
   })
 })
