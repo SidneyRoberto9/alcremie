@@ -21,9 +21,6 @@ const nextConfig = {
     loader: "custom",
     loaderFile: "./src/utils/cloudinary-loader.ts",
   },
-  // Next otherwise overwrites the repo's own CLAUDE.md with an
-  // auto-generated agent-rules file on every `next dev`.
-  agentRules: false,
 }
 
 export default nextConfig
