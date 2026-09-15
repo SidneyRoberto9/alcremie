@@ -23,7 +23,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Inlined into the client bundle, so it has to exist at build time.
-ARG NEXT_PUBLIC_CLOUDINARY_CLOUD=alcremie
+ARG NEXT_PUBLIC_CLOUDINARY_CLOUD=drcqberx9
 ENV NEXT_PUBLIC_CLOUDINARY_CLOUD=${NEXT_PUBLIC_CLOUDINARY_CLOUD}
 # The home page prerenders from the database (revalidate = 60), so the build
 # needs a reachable DATABASE_URL. Coolify passes it as a build arg when the

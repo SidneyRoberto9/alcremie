@@ -1,4 +1,4 @@
-const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD ?? "alcremie"
+const CLOUD = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD ?? "drcqberx9"
 
 interface Transformable {
   cloudinaryId: string
