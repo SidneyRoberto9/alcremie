@@ -15,6 +15,13 @@
       "when": 1789491347328,
       "tag": "0001_tiny_ravenous",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789512188615,
+      "tag": "0002_brave_blazing_skull",
+      "breakpoints": true
     }
   ]
 }

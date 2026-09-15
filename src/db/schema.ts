@@ -61,6 +61,11 @@ export const images = pgTable(
     /** Cor dominante em #rrggbb, usada como placeholder enquanto a imagem carrega. */
     placeholder: char("placeholder", { length: 7 }),
 
+    // Incrementado a cada abertura de /images/[id]. Sem contador por imagem
+    // antes disso; só existia o total de requests em `counters`, que não diz
+    // qual imagem foi vista.
+    views: integer("views").notNull().default(0),
+
     rating: imageRating("rating").notNull(),
 
     // Mantém o nome e a semântica antigos para as queries não precisarem

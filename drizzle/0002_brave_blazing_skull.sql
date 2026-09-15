@@ -1,0 +1,1 @@
+ALTER TABLE "images" ADD COLUMN "views" integer DEFAULT 0 NOT NULL;
