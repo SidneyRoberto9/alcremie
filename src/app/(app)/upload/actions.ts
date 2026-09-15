@@ -2,6 +2,7 @@
 
 import { createHash } from "node:crypto"
 import { v2 as cloudinary } from "cloudinary"
+import { revalidatePath } from "next/cache"
 import sharp from "sharp"
 import { createImageWithTags } from "@/services/images"
 import { ratingOf, tagImage } from "@/services/tagger"
@@ -62,6 +63,11 @@ export const uploadOne = async (formData: FormData): Promise<UploadResult> => {
   if (!id) {
     return { ok: false, error: "duplicate" }
   }
+
+  // "/" com type "layout" invalida o layout raiz e tudo abaixo dele: home (ISR
+  // de 60s), gallery, nsfw, recent, /api/images e /api/stats. Revalidar rota a
+  // rota deixaria uma listagem velha para trás toda vez que alguém criasse uma.
+  revalidatePath("/", "layout")
 
   return { ok: true, data: { id, rating, tags: detected.slice(0, 8).map((tag) => tag.name) } }
 }
