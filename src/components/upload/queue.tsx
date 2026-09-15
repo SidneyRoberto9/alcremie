@@ -28,7 +28,7 @@ export const Queue = ({ items, onRemove, onSend, sending }: QueueProps) => {
         ))}
       </div>
 
-      <div className="flex items-center gap-3.5 rounded-[10px] border border-line bg-sidebar px-4 py-3.5">
+      <div className="sticky bottom-6 z-10 flex items-center gap-3.5 rounded-[10px] border border-line bg-sidebar px-4 py-3.5 shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
         <div className="flex items-center gap-2">
           <div className="relative h-5 w-[34px] flex-none rounded-full bg-accent">
             <div className="absolute right-0.5 top-0.5 h-4 w-4 rounded-full bg-rail" />
