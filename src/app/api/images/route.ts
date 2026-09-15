@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { fetchImageFeedWithTags, fetchImagePage, fetchImagesByTag } from "@/services/images"
+import { countRequest } from "@/services/stats"
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).max(10_000).default(1),
@@ -21,6 +22,8 @@ export const GET = async (request: NextRequest) => {
   }
 
   const { page, limit, nsfw, tag, cursor } = parsed.data
+
+  await countRequest()
 
   // tag manda mesmo com cursor ausente; cursor sem tag vai para o feed geral.
   // Sem essa ordem, um scroll do /recent sem tag cairia em fetchImagePage e

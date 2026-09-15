@@ -1,19 +1,43 @@
+import { count, sql } from "drizzle-orm"
 import { db } from "@/db/client"
-import { counters } from "@/db/schema"
-
-const DEFAULTS = { images: 0, tags: 0, requests: 0 }
+import { counters, images, tags } from "@/db/schema"
 
 /**
- * Home. Três leituras de índice em vez de três COUNT(*) de tabela cheia.
- * Banco novo não tem linha em counters ainda, então os contadores ausentes
- * caem para 0 em vez de virar undefined na home.
+ * Home. images e tags saem de COUNT(*) direto: a tabela counters só era escrita
+ * pelo seed, então a home mostrava 0 para sempre num banco alimentado por
+ * upload. Contar na hora custa dois index-only scans numa página revalidada a
+ * cada 60s — mais barato que manter dois contadores denormalizados em sincronia.
+ *
+ * requests continua em counters porque não há tabela para contar: é o
+ * countRequest abaixo que o incrementa, uma vez por chamada da API pública.
  */
 export const getStatistics = async () => {
-  const rows = await db.select({ key: counters.key, value: counters.value }).from(counters)
-  const byKey = new Map(rows.map((r) => [r.key, r.value]))
+  const [[imageCount], [tagCount], requestRows] = await Promise.all([
+    db.select({ value: count() }).from(images),
+    db.select({ value: count() }).from(tags),
+    db
+      .select({ value: counters.value })
+      .from(counters)
+      .where(sql`${counters.key} = 'requests'`),
+  ])
+
   return {
-    images: byKey.get("images") ?? DEFAULTS.images,
-    tags: byKey.get("tags") ?? DEFAULTS.tags,
-    requests: byKey.get("requests") ?? DEFAULTS.requests,
+    images: imageCount?.value ?? 0,
+    tags: tagCount?.value ?? 0,
+    requests: requestRows[0]?.value ?? 0,
   }
+}
+
+/**
+ * Um UPDATE por chamada da API. Sem transação e sem leitura antes: o
+ * incremento acontece no banco, então chamadas concorrentes não se sobrescrevem.
+ */
+export const countRequest = async () => {
+  await db
+    .insert(counters)
+    .values({ key: "requests", value: 1 })
+    .onConflictDoUpdate({
+      target: counters.key,
+      set: { value: sql`${counters.value} + 1`, updatedAt: sql`now()` },
+    })
 }

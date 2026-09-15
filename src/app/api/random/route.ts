@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { randomImage } from "@/services/images"
+import { countRequest } from "@/services/stats"
 
 export const dynamic = "force-dynamic"
 
@@ -17,6 +18,8 @@ export const GET = async (request: NextRequest) => {
   if (!parsed.success) {
     return NextResponse.json({ error: z.treeifyError(parsed.error) }, { status: 400 })
   }
+
+  await countRequest()
 
   const image = await randomImage(parsed.data.nsfw)
 
